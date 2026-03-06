@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Transplantica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:    #09141a;
@@ -22,16 +22,21 @@
   --green2:#28c06a;
   --text:  #c8dce4;
   --muted: #4a6878;
-  --mono:  'Courier Prime', monospace;
+  --mono:  'Rajdhani', sans-serif;
   --disp:  'Bebas Neue', sans-serif;
   --heart-bg:  rgba(210,35,35,0.68);
   --lung-bg:   rgba(25,95,210,0.68);
   --kidney-bg: rgba(175,145,20,0.68);
   --liver-bg:  rgba(20,158,68,0.68);
+  /* Board-game row tints */
+  --row-stable-bg: rgba(40,160,140,0.14);
+  --row-sick-bg:   rgba(30,100,110,0.18);
+  --row-dying-bg:  rgba(180,40,40,0.28);
 }
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:15px;font-weight:600;}
 
 .screen{display:none;height:100dvh;overflow:hidden;flex-direction:column;}
 .screen.active{display:flex;}
@@ -86,17 +91,20 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .ov-organs-scroll::-webkit-scrollbar{display:none;}
 .ov-organ-thumb{padding:.22rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
 .ov-organ-thumb img{width:38px;height:38px;object-fit:contain;display:block;border-radius:2px;}
-.ov-pcols{flex:1;display:flex;overflow:hidden;}
-.ov-pcol{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden;}
-.ov-pcol:last-child{border-right:none;}
-.ov-pcol-hdr{padding:.26rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.75rem;text-align:center;flex-shrink:0;}
-.ov-pcol-hdr.dying{color:var(--red2);}
-.ov-pcol-hdr.sick{color:var(--orange2);}
-.ov-pcol-hdr.stable{color:var(--green2);}
-.ov-pcol-scroll{flex:1;overflow-y:auto;padding:.18rem;display:grid;grid-template-columns:1fr 1fr;gap:.16rem;align-content:start;scrollbar-width:none;}
+.ov-pcols{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.ov-pcol{flex:1;display:flex;flex-direction:row;border-bottom:2px solid rgba(0,0,0,.35);overflow:hidden;}
+.ov-pcol:last-child{border-bottom:none;}
+.ov-pcol.stable-row{background:var(--row-stable-bg);}
+.ov-pcol.sick-row{background:var(--row-sick-bg);}
+.ov-pcol.dying-row{background:var(--row-dying-bg);}
+.ov-pcol-hdr{padding:.3rem .28rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.65rem;letter-spacing:.05em;flex-shrink:0;width:34px;border-right:1px solid rgba(255,255,255,.08);writing-mode:vertical-rl;}
+.ov-pcol-hdr.dying{color:var(--red2);background:rgba(192,57,43,.2);}
+.ov-pcol-hdr.sick{color:var(--orange2);background:rgba(224,120,32,.12);}
+.ov-pcol-hdr.stable{color:var(--green2);background:rgba(46,184,200,.1);}
+.ov-pcol-scroll{flex:1;overflow-x:auto;overflow-y:hidden;padding:.14rem;display:flex;flex-direction:row;gap:.14rem;align-items:center;scrollbar-width:none;}
 .ov-pcol-scroll::-webkit-scrollbar{display:none;}
-.ov-pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;}
-.ov-pcard img{width:100%;display:block;aspect-ratio:508/733;object-fit:cover;}
+.ov-pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;flex-shrink:0;height:100%;aspect-ratio:508/733;}
+.ov-pcard img{width:100%;height:100%;display:block;object-fit:cover;}
 .ov-ready{background:var(--bg2);border-top:2px solid var(--line);padding:.45rem .65rem;display:flex;flex-direction:column;gap:.3rem;flex-shrink:0;}
 .ready-chips{display:flex;gap:.28rem;flex-wrap:wrap;}
 .rchip{font-size:.68rem;padding:.18rem .42rem;border:1px solid var(--line);color:var(--muted);}
@@ -135,10 +143,12 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .topbar-loan:hover{background:var(--orange);color:var(--bg);}
 .players-bar{display:flex;gap:.22rem;overflow-x:auto;padding:.22rem .4rem;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none;}
 .players-bar::-webkit-scrollbar{display:none;}
-.pchip{flex-shrink:0;background:var(--bg3);border:1px solid var(--line);padding:.2rem .5rem;font-size:.78rem;font-weight:700;white-space:nowrap;transition:opacity .2s,border-color .2s,color .2s,font-size .15s;}
+.pchip{flex-shrink:0;background:var(--bg3);border:1px solid var(--line);padding:.22rem .5rem;font-size:.78rem;font-weight:700;transition:opacity .2s,border-color .2s,color .2s;display:flex;flex-direction:column;align-items:flex-start;gap:.08rem;}
 .pchip.me{border-color:var(--teal);color:var(--teal);}
 .pchip .pm{color:var(--green2);font-size:.68rem;}
-.pchip.sell-active{border-color:var(--green2);color:var(--green2);font-size:.95rem;padding:.25rem .6rem;}
+.pchip-inv{display:flex;flex-wrap:wrap;gap:1px;align-items:center;}
+.pchip-inv img{width:15px;height:15px;object-fit:contain;border-radius:1px;}
+.pchip.sell-active{border-color:var(--green2);color:var(--green2);}
 .pchip.sell-inactive{opacity:.28;filter:grayscale(1);}
 .inv-always-bar{display:flex;align-items:center;gap:.55rem;padding:.3rem .55rem;background:var(--bg2);border-bottom:2px solid var(--line);flex-shrink:0;}
 .inv-always-lbl{font-family:var(--disp);font-size:.6rem;letter-spacing:.22em;color:var(--muted);white-space:nowrap;flex-shrink:0;}
@@ -230,22 +240,26 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .btn-sell:active:not(:disabled){transform:scale(0.96);}
 .btn-sell:disabled{opacity:.3;cursor:not-allowed;transform:none!important;}
 
-/* Patient queue columns */
+/* Patient queue rows */
 .sell-hdr{display:flex;align-items:center;justify-content:space-between;padding:.26rem .6rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.55rem;letter-spacing:.2em;color:var(--muted);flex-shrink:0;}
 .sell-active-lbl{color:var(--red2);font-size:.58rem;font-weight:700;}
-.patient-cols{flex:1;display:flex;overflow:hidden;min-height:0;}
-.pcol{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden;}
-.pcol:last-child{border-right:none;}
-.pcol-hdr{padding:.24rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.72rem;text-align:center;flex-shrink:0;}
-.pcol-hdr.dying{color:var(--red2);}
-.pcol-hdr.sick{color:var(--orange2);}
-.pcol-hdr.stable{color:var(--green2);}
-.pcol-scroll{flex:1;overflow-y:auto;padding:.16rem;display:grid;grid-template-columns:1fr 1fr;gap:.16rem;align-content:start;scrollbar-width:none;}
+.patient-cols{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.pcol{flex:1;display:flex;flex-direction:row;border-bottom:2px solid rgba(0,0,0,.35);overflow:hidden;}
+.pcol:last-child{border-bottom:none;}
+.pcol.stable-row{background:var(--row-stable-bg);}
+.pcol.sick-row{background:var(--row-sick-bg);}
+.pcol.dying-row{background:var(--row-dying-bg);}
+.pcol-hdr{padding:.3rem .28rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;letter-spacing:.05em;flex-shrink:0;width:34px;border-right:1px solid rgba(255,255,255,.08);writing-mode:vertical-rl;}
+.pcol-hdr.dying{color:var(--red2);background:rgba(192,57,43,.22);}
+.pcol-hdr.sick{color:var(--orange2);background:rgba(224,120,32,.14);}
+.pcol-hdr.stable{color:var(--green2);background:rgba(46,184,200,.1);}
+.pcol-scroll{flex:1;overflow-x:auto;overflow-y:hidden;padding:.1rem;display:flex;flex-direction:row;gap:.1rem;align-items:center;scrollbar-width:none;}
 .pcol-scroll::-webkit-scrollbar{display:none;}
-.pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .12s;}
+.pcard{flex-shrink:0;height:100%;aspect-ratio:508/733;background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .12s;}
 .pcard:active{transform:scale(0.97);}
-.pcard.can-sell{border-color:var(--green2);}
-.pcard img{width:100%;display:block;aspect-ratio:508/733;object-fit:cover;}
+.pcard.can-sell{border:2px solid var(--green2);box-shadow:0 0 6px rgba(40,192,106,.4);}
+.pcard.next-up{border:2px solid var(--teal);box-shadow:0 0 7px rgba(46,184,200,.5);}
+.pcard img{width:100%;height:100%;display:block;object-fit:cover;}
 
 /* ── FINAL SCORES ── */
 #screen-scores{overflow-y:auto;}
@@ -273,21 +287,23 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .flash-red{background:rgba(192,57,43,.2);animation:fout .5s forwards;}
 .flash-teal{background:rgba(46,184,200,.15);animation:fout .5s forwards;}
 @keyframes fout{0%{opacity:1}100%{opacity:0}}
-#toastStack{position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:.3rem;align-items:center;pointer-events:none;}
-.toast{background:var(--bg3);border:1px solid var(--teal);color:var(--teal);font-family:var(--mono);font-size:.76rem;padding:.42rem .85rem;letter-spacing:.07em;white-space:nowrap;animation:tIn .2s ease-out,tOut .3s ease-in 2.5s forwards;}
-.toast.t-ok{border-color:var(--green2);color:var(--green2);}
-.toast.t-err{border-color:var(--red2);color:var(--red2);}
-.toast.t-warn{border-color:var(--orange2);color:var(--orange2);}
-@keyframes tIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes tOut{to{opacity:0;transform:translateY(-6px)}}
+#toastStack{position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none;}
+.toast{background:var(--bg2);border:2px solid var(--teal);color:var(--teal);font-family:var(--disp);font-size:1.05rem;padding:.6rem 1.4rem;letter-spacing:.1em;white-space:nowrap;animation:tIn .2s ease-out,tOut .3s ease-in 3.8s forwards;box-shadow:0 4px 20px rgba(0,0,0,.7);}
+.toast.t-ok{border-color:var(--green2);color:var(--green2);background:rgba(13,30,38,0.97);}
+.toast.t-err{border-color:var(--red2);color:var(--red2);background:rgba(13,30,38,0.97);}
+.toast.t-warn{border-color:var(--orange2);color:var(--orange2);background:rgba(13,30,38,0.97);}
+@keyframes tIn{from{opacity:0;transform:translateY(-10px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes tOut{to{opacity:0;transform:translateY(-8px)}}
 @keyframes tick{0%{transform:scale(1.08)}100%{transform:scale(1)}}
 .tick{animation:tick .12s ease-out;}
-.pcard.done{opacity:.22;filter:grayscale(1);cursor:default;pointer-events:none;}
-.pcard.next-up{border:2px solid var(--teal);box-shadow:0 0 7px rgba(46,184,200,.5);}
 @keyframes dealIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 .deal-anim{animation:dealIn .32s ease-out both;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 .sell-top.vis{display:flex;animation:slideDown .28s ease-out;}
+/* Round-end overlay */
+.roundend-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:800;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+.roundend-overlay.open{display:flex;}
+.roundend-box{background:var(--bg2);border:2px solid var(--teal);padding:2rem 1.5rem;max-width:320px;width:100%;text-align:center;display:flex;flex-direction:column;gap:1.2rem;box-shadow:0 8px 40px rgba(0,0,0,.8);}
 </style>
 </head>
 <body>
@@ -353,9 +369,9 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
       <div class="ov-organs-scroll" id="ovOrganList"></div>
     </div>
     <div class="ov-pcols">
-      <div class="ov-pcol"><div class="ov-pcol-hdr dying">💀</div><div class="ov-pcol-scroll" id="ovColDying"></div></div>
-      <div class="ov-pcol"><div class="ov-pcol-hdr sick">💔</div><div class="ov-pcol-scroll" id="ovColSick"></div></div>
-      <div class="ov-pcol"><div class="ov-pcol-hdr stable">♥️</div><div class="ov-pcol-scroll" id="ovColStable"></div></div>
+      <div class="ov-pcol stable-row"><div class="ov-pcol-hdr stable">♥️ STABIL</div><div class="ov-pcol-scroll" id="ovColStable"></div></div>
+      <div class="ov-pcol sick-row"><div class="ov-pcol-hdr sick">💔 SJUK</div><div class="ov-pcol-scroll" id="ovColSick"></div></div>
+      <div class="ov-pcol dying-row"><div class="ov-pcol-hdr dying">💀 DÖENDE</div><div class="ov-pcol-scroll" id="ovColDying"></div></div>
     </div>
   </div>
   <div class="ov-ready">
@@ -442,9 +458,9 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
       <span style="color:var(--muted)" id="patientQCount">0 st</span>
     </div>
     <div class="patient-cols">
-      <div class="pcol"><div class="pcol-hdr dying">💀</div><div class="pcol-scroll" id="pcolDying"></div></div>
-      <div class="pcol"><div class="pcol-hdr sick">💔</div><div class="pcol-scroll" id="pcolSick"></div></div>
-      <div class="pcol"><div class="pcol-hdr stable">♥️</div><div class="pcol-scroll" id="pcolStable"></div></div>
+      <div class="pcol stable-row"><div class="pcol-hdr stable">♥️ STABIL</div><div class="pcol-scroll" id="pcolStable"></div></div>
+      <div class="pcol sick-row"><div class="pcol-hdr sick">💔 SJUK</div><div class="pcol-scroll" id="pcolSick"></div></div>
+      <div class="pcol dying-row"><div class="pcol-hdr dying">💀 DÖENDE</div><div class="pcol-scroll" id="pcolDying"></div></div>
     </div>
   </div>
 </div>
@@ -479,6 +495,16 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
 </div>
 
+<!-- Round-end overlay -->
+<div class="roundend-overlay" id="roundEndOverlay">
+  <div class="roundend-box">
+    <div style="font-family:var(--disp);font-size:2.2rem;color:var(--teal);letter-spacing:.15em;">RUNDA SLUT</div>
+    <div style="font-size:.9rem;color:var(--muted);">Alla patienter är behandlade</div>
+    <button class="btn btn-primary hidden" id="roundEndBtn" onclick="hostEndRound()">VISA RUNDASLUT →</button>
+    <div style="font-size:.8rem;color:var(--muted);" id="roundEndWait" class="hidden">Väntar på värden...</div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, serverTimestamp }
@@ -509,8 +535,8 @@ const db=getDatabase(app);
 // ── STATIC DATA ──────────────────────────────────────────
 const ORGAN_DATA={
   hjärta:{name:'Hjärta',img:'images/organ/hjärta.png',weight:1},
-  lungor:{name:'Lungor',img:'images/organ/lungor.png',weight:2},
-  njurar:{name:'Njurar',img:'images/organ/njurar.png',weight:1},
+  lungor:{name:'Lungor',img:'images/organ/lungor.png',weight:1},
+  njurar:{name:'Njurar',img:'images/organ/njurar.png',weight:2},
   lever: {name:'Lever', img:'images/organ/lever.png', weight:1},
 };
 
@@ -606,7 +632,31 @@ const syncedElapsed=()=>{
 };
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('active',el.id===id));}
-function toast(msg,type=''){const s=document.getElementById('toastStack');const t=document.createElement('div');t.className='toast'+(type?' t-'+type:'');t.textContent=msg;s.appendChild(t);setTimeout(()=>t.remove(),3200);}
+function toast(msg,type=''){const s=document.getElementById('toastStack');const t=document.createElement('div');t.className='toast'+(type?' t-'+type:'');t.textContent=msg;s.appendChild(t);setTimeout(()=>t.remove(),4500);}
+
+// ── INVENTORY HELPERS (count-based: {hjärta:2, njurar:1}) ─────────────────
+// Returns flat array of organ IDs, one per unit (e.g. [{hjärta,njurar,njurar}])
+function invList(inv){const list=[];Object.entries(inv||{}).forEach(([id,val])=>{const n=typeof val==='number'?val:(val?1:0);for(let i=0;i<n;i++)list.push(id);});return list;}
+// Returns true if inventory has at least one of orgId
+function invHas(inv,orgId){const v=(inv||{})[orgId];return typeof v==='number'?v>0:!!v;}
+// Returns true if inventory has all organs in list (one of each required)
+function invHasAll(inv,organs){return organs.every(o=>invHas(inv,o));}
+// Returns the count of a specific organ
+function invCount(inv,orgId){const v=(inv||{})[orgId];return typeof v==='number'?v:(v?1:0);}
+
+// ── SELL ORDER HELPER ─────────────────────────────────────────────────────
+// Gets patient from patientQueue by sellOrder direct index (fixes skipped-patient bug)
+function getCurrentSellPatient(patients,sellOrder,idx){
+  if(!sellOrder||!sellOrder.length){
+    // legacy fallback
+    const all=[...patients.filter(p=>p.status==='dying'),...patients.filter(p=>p.status==='sick'),...patients.filter(p=>p.status==='stable')];
+    return all.filter(p=>!p.dead&&!p.sold)[idx]||null;
+  }
+  if(idx>=sellOrder.length) return null;
+  const id=sellOrder[idx];
+  const p=patients.find(x=>x.id===id);
+  return (p&&!p.dead&&!p.sold)?p:null;
+}
 function flash(c){const el=document.getElementById('flashOverlay');el.className='flash-overlay flash-'+c;setTimeout(()=>el.className='flash-overlay',600);}
 
 // Organ pill (image only, no text)
@@ -706,6 +756,7 @@ function listenToRoom(){
     else if(s==='overview'){showScreen('screen-overview');renderOverview();}
     else if(s==='playing') {showScreen('screen-game');renderGame();}
     else if(s==='between') showBetween();
+    else if(s==='roundend') showRoundEnd();
     else if(s==='final')   showFinalScores();
   });
 }
@@ -844,23 +895,25 @@ function renderGame(){
 
   const pb=document.getElementById('playersBar');pb.innerHTML='';
   const isSellPhase=gs.phase==='sell';
-  const activeForSell=isSellPhase?getActiveSellPatients(gs.patientQueue||[]):[];
-  const curPat=isSellPhase&&activeForSell[gs.currentSellIndex||0]?activeForSell[gs.currentSellIndex||0]:null;
+  const curPat=isSellPhase?getCurrentSellPatient(gs.patientQueue||[],gs.sellOrder,gs.currentSellIndex||0):null;
   Object.entries(gs.players||{}).forEach(([pid,p])=>{
     const c=document.createElement('div');
     let extra='';
-    if(curPat){const pInv=Object.keys(p.inventory||{});extra=curPat.organ.every(o=>pInv.includes(o))?' sell-active':' sell-inactive';}
+    if(curPat){extra=invHasAll(p.inventory,curPat.organ)?' sell-active':' sell-inactive';}
     c.className='pchip'+(pid===myPlayerId?' me':'')+extra;
-    const moneyHtml=pid===myPlayerId?` <span class="pm">${p.money.toFixed(1)}kr</span>`:'';
-    c.innerHTML=`${p.name}${moneyHtml}`;
+    const moneyHtml=pid===myPlayerId?`<span class="pm">${p.money.toFixed(1)}kr</span>`:'';
+    // Show organ inventory icons for all players
+    const pInvList=invList(p.inventory||{});
+    const orgIcons=pInvList.map(orgId=>`<img src="${ORGAN_DATA[orgId]?.img||''}" alt="${orgId}" onerror="this.style.display='none'">`).join('');
+    c.innerHTML=`<span>${p.name} ${moneyHtml}</span>${orgIcons?`<span class="pchip-inv">${orgIcons}</span>`:''}`;
     pb.appendChild(c);
   });
 
   // Always-visible inventory
   const invAlwaysPills=document.getElementById('invAlwaysPills');invAlwaysPills.innerHTML='';
-  const myInvKeys=Object.keys(me.inventory||{});
-  if(!myInvKeys.length){invAlwaysPills.innerHTML='<span style="font-size:.65rem;color:var(--muted);">Tomt lager</span>';}
-  else{myInvKeys.forEach(orgId=>{const pill=makeOrganPill(orgId,'org-pill-lg','');if(pill)invAlwaysPills.appendChild(pill);});}
+  const myInvList=invList(me.inventory||{});
+  if(!myInvList.length){invAlwaysPills.innerHTML='<span style="font-size:.65rem;color:var(--muted);">Tomt lager</span>';}
+  else{myInvList.forEach(orgId=>{const pill=makeOrganPill(orgId,'org-pill-lg','');if(pill)invAlwaysPills.appendChild(pill);});}
 
   document.getElementById('statusBanner').textContent=gs.phaseMsg||'';
 
@@ -904,14 +957,15 @@ function renderBuyPhase(){
 // ── SELL PHASE ────────────────────────────────────────────
 function renderSellPhase(){
   const gs=gameState,patients=gs.patientQueue||[],idx=gs.currentSellIndex||0;
-  const active=getActiveSellPatients(patients);
-  if(idx>=active.length) return;
-  const p=active[idx];
+  const p=getCurrentSellPatient(patients,gs.sellOrder,idx);
+  if(!p){
+    // No patient at this index (e.g. dead before being shown) — auto-advance
+    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(advanceSell,600);}
+    return;
+  }
   const me=(gs.players||{})[myPlayerId];
-  const myInv=Object.keys(me?.inventory||{});
-  const canSell=p.organ.every(o=>myInv.includes(o));
+  const canSell=invHasAll(me?.inventory,p.organ);
   const budget=patientBudget(p);
-  const spd=getSpeed();
 
   // Big patient
   document.getElementById('sellPatientImg').src=`images/patienter/${p.bild}`;
@@ -919,12 +973,12 @@ function renderSellPhase(){
   psb.textContent=statusLabel(p.status);
   psb.className='sell-patient-status-bar '+statusClass(p.status);
 
-  // Inventory pills (image only)
+  // Inventory pills (image only, with counts)
   const invPills=document.getElementById('sellInvPills');invPills.innerHTML='';
-  const invKeys=Object.keys(me?.inventory||{});
-  if(!invKeys.length){invPills.innerHTML='<span style="font-size:.6rem;color:var(--muted);">–</span>';}
+  const myList=invList(me?.inventory||{});
+  if(!myList.length){invPills.innerHTML='<span style="font-size:.6rem;color:var(--muted);">–</span>';}
   else{
-    invKeys.forEach(orgId=>{
+    myList.forEach(orgId=>{
       const isNeeded=p.organ.includes(orgId);
       const pill=makeOrganPill(orgId,'org-pill-lg',isNeeded?'inv-own':'');
       if(pill) invPills.appendChild(pill);
@@ -934,14 +988,14 @@ function renderSellPhase(){
   // Needed pills
   const snPills=document.getElementById('sellNeededPills');snPills.innerHTML='';
   p.organ.forEach(o=>{
-    const have=myInv.includes(o);
+    const have=invHas(me?.inventory,o);
     const pill=makeOrganPill(o,'org-pill-lg',have?'have':'need');
     if(pill) snPills.appendChild(pill);
   });
 
   // Seller count check
   const allPlayers=Object.values(gs.players||{});
-  const sellersCount=allPlayers.filter(pl=>p.organ.every(o=>Object.keys(pl.inventory||{}).includes(o))).length;
+  const sellersCount=allPlayers.filter(pl=>invHasAll(pl.inventory,p.organ)).length;
   const noOneCan=sellersCount===0;
   const onlyOneCan=sellersCount===1;
 
@@ -955,7 +1009,7 @@ function renderSellPhase(){
     sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
     document.getElementById('stFill').style.width='0%';
     document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — hoppar automatiskt';
-    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,p),1800);}
+    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,p),2500);}
   } else if(onlyOneCan){
     priceBlock.style.display='block';
     priceLbl.textContent='MAXPRIS (du är enda säljaren)';
@@ -989,7 +1043,7 @@ function renderSellPhase(){
   }
 }
 
-// Active = not dead, not sold
+// Active = not dead, not sold (used for display/count only — sell order uses sellOrder+index)
 function getActiveSellPatients(patients){
   const all=[...patients.filter(p=>p.status==='dying'),...patients.filter(p=>p.status==='sick'),...patients.filter(p=>p.status==='stable')];
   return all.filter(p=>!p.dead&&!p.sold);
@@ -1015,36 +1069,32 @@ function renderOrganQueue(){
 function renderPatientCols(){
   const gs=gameState,patients=gs.patientQueue||[];
   const me=(gs.players||{})[myPlayerId];
-  const myInv=Object.keys(me?.inventory||{});
-  const active=getActiveSellPatients(patients);
   const curIdx=gs.currentSellIndex||0;
-  const currentPatient=gs.phase==='sell'&&curIdx<active.length?active[curIdx]:null;
-  const nextPatient=gs.phase==='sell'&&(curIdx+1)<active.length?active[curIdx+1]:null;
+  const currentPatient=gs.phase==='sell'?getCurrentSellPatient(patients,gs.sellOrder,curIdx):null;
+  const nextPatient=gs.phase==='sell'?getCurrentSellPatient(patients,gs.sellOrder,curIdx+1):null;
 
   document.getElementById('patientQCount').textContent=patients.filter(p=>!p.dead&&!p.sold).length+' st';
 
   function fillCol(elId,group){
     const el=document.getElementById(elId);el.innerHTML='';
-    // Show all (including done) up to MAX_COL
-    const vis=group.slice(0,MAX_COL);
-    if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.18rem;grid-column:1/-1;">–</div>';return;}
+    // Only show alive, unprocessed patients (sold/dead are hidden)
+    const vis=group.filter(p=>!p.dead&&!p.sold).slice(0,MAX_COL);
+    if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.3rem;">–</div>';return;}
     vis.forEach(p=>{
       // Current patient is shown large in sell area — skip in queue
-      if(currentPatient&&p.id===currentPatient.id&&p.status===currentPatient.status) return;
-      const isDone=p.dead||p.sold;
-      const isNext=!isDone&&nextPatient&&p.id===nextPatient.id&&p.status===nextPatient.status;
-      const canSell=!isDone&&p.organ.every(o=>myInv.includes(o));
+      if(currentPatient&&p.id===currentPatient.id) return;
+      const isNext=nextPatient&&p.id===nextPatient.id;
+      const canSell=invHasAll(me?.inventory,p.organ);
       const card=document.createElement('div');
       let cls='pcard';
-      if(isDone) cls+=' done';
-      else if(isNext) cls+=' next-up';
+      if(isNext) cls+=' next-up';
       else if(canSell&&gs.phase==='sell') cls+=' can-sell';
       card.className=cls;
       card.innerHTML=`<img src="images/patienter/${p.bild}" alt="" onerror="this.style.display='none'">`;
-      if(!isDone) card.onclick=()=>openModal(p.bild);
+      card.onclick=()=>openModal(p.bild);
       el.appendChild(card);
     });
-    if(!el.children.length) el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.18rem;grid-column:1/-1;">–</div>';
+    if(!el.children.length) el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.3rem;">–</div>';
   }
   fillCol('pcolDying',  patients.filter(p=>p.status==='dying'));
   fillCol('pcolSick',   patients.filter(p=>p.status==='sick'));
@@ -1094,12 +1144,11 @@ function startTimer(){
     } else {
       // sell timer
       const patients=gs.patientQueue||[];
-      const active=getActiveSellPatients(patients);
       const idx=gs.currentSellIndex||0;
-      if(idx>=active.length) return;
-      const p=active[idx];
+      const p=getCurrentSellPatient(patients,gs.sellOrder,idx);
+      if(!p) return;
       const allPlayers=Object.values(gs.players||{});
-      const sellersCount=allPlayers.filter(pl=>p.organ.every(o=>Object.keys(pl.inventory||{}).includes(o))).length;
+      const sellersCount=allPlayers.filter(pl=>invHasAll(pl.inventory,p.organ)).length;
       if(sellersCount===0||sellersCount===1) return; // handled elsewhere
 
       const max=gs.timerDuration||spd.sell;
@@ -1140,7 +1189,9 @@ window.handleBuy=async function(){
   }
   const newMoney=parseFloat((currentMoney-price).toFixed(2));
   const newLoans=currentLoans+loansToTake;
-  const newInv={...(me.inventory||{}),[organId]:true};
+  // Count-based inventory: increment count (supports owning multiple of same organ)
+  const curInv=me.inventory||{};
+  const newInv={...curInv,[organId]:invCount(curInv,organId)+1};
   if(loansToTake>0){
     toast(`Lån taget automatiskt: +${loansToTake*LOAN_AMOUNT} kr`,'warn');
     update(ref(db,`rooms/${roomCode}`),{lastEvent:{type:'loan',player:myName,loans:newLoans,t:serverNow()}});
@@ -1148,7 +1199,7 @@ window.handleBuy=async function(){
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,phaseMsg:`${myName} köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,inventory:newInv,loans:newLoans});
   flash('teal');toast(`Köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`,'ok');
-  if(isHost) setTimeout(advanceBuy,1500);
+  if(isHost) setTimeout(advanceBuy,2500);
 };
 
 // ── SELL ACTION ───────────────────────────────────────────
@@ -1157,16 +1208,15 @@ window.handleSell=async function(){
   const gs=gameState;if(!gs||gs.lastWinner) return;
   hasActedSell=true;document.getElementById('sellBtn').disabled=true;
   const patients=gs.patientQueue||[];
-  const active=getActiveSellPatients(patients);
   const idx=gs.currentSellIndex||0;
-  const p=active[idx];if(!p) return;
+  const p=getCurrentSellPatient(patients,gs.sellOrder,idx);
+  if(!p) return;
   const me=(gs.players||{})[myPlayerId];
-  const myInv=Object.keys(me?.inventory||{});
-  if(!p.organ.every(o=>myInv.includes(o))){toast('Du saknar organ!','err');hasActedSell=false;document.getElementById('sellBtn').disabled=false;return;}
+  if(!invHasAll(me?.inventory,p.organ)){toast('Du saknar organ!','err');hasActedSell=false;document.getElementById('sellBtn').disabled=false;return;}
 
   const budget=patientBudget(p);
   const allPlayers=Object.values(gs.players||{});
-  const sellersCount=allPlayers.filter(pl=>p.organ.every(o=>Object.keys(pl.inventory||{}).includes(o))).length;
+  const sellersCount=allPlayers.filter(pl=>invHasAll(pl.inventory,p.organ)).length;
 
   let paid;
   if(sellersCount===1){
@@ -1176,35 +1226,40 @@ window.handleSell=async function(){
     paid=parseFloat(Math.min(budget,sellPriceFromT(e/max,budget)).toFixed(2));
   }
 
-  const newInv={...(me.inventory||{})};p.organ.forEach(o=>delete newInv[o]);
+  // Count-based inventory: decrement counts when selling organs
+  const newInv={...(me.inventory||{})};
+  p.organ.forEach(o=>{
+    const c=invCount(newInv,o);
+    if(c>1) newInv[o]=c-1; else delete newInv[o];
+  });
   const newMoney=parseFloat((me.money+paid).toFixed(2));
   const newPts=(me.pts||0)+p.pts;
   const newCured=(me.cured||0)+1;
 
-  // Mark patient as sold in the FULL patientQueue array (find by id+status)
-  const updQ=patients.map(x=>x.id===p.id&&x.status===p.status?{...x,sold:true}:x);
+  // Mark patient as sold in the FULL patientQueue array (find by id)
+  const updQ=patients.map(x=>x.id===p.id?{...x,sold:true}:x);
 
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,patientQueue:updQ,phaseMsg:`${myName} sålde för ${paid.toFixed(1)} kr (+${p.pts}p)`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,pts:newPts,inventory:newInv,cured:newCured});
   flash('teal');toast(`Sålde för ${paid.toFixed(1)} kr! +${p.pts}p`,'ok');
-  if(isHost) setTimeout(advanceSell,1500);
+  if(isHost) setTimeout(advanceSell,2500);
 };
 
 // ── DEGRADATION ───────────────────────────────────────────
 async function patientTimerExpired(){
   if(!isHost) return;
   const gs=gameState,patients=gs.patientQueue||[];
-  const active=getActiveSellPatients(patients);
   const idx=gs.currentSellIndex||0;
-  if(idx>=active.length) return;
+  const p=getCurrentSellPatient(patients,gs.sellOrder,idx);
+  if(!p) return;
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:'NONE',phaseMsg:'Ingen sålde — patienten försämras!'});
-  setTimeout(()=>doDegrade(patients,active[idx]),1500);
+  setTimeout(()=>doDegrade(patients,p),2000);
 }
 
 async function doDegrade(patients,p){
   if(!isHost) return;
   const updQ=patients.map(x=>{
-    if(x.id!==p.id||x.status!==p.status) return x;
+    if(x.id!==p.id) return x;
     if(x.status==='stable') return {...x,status:'sick'};
     if(x.status==='sick')   return {...x,status:'dying'};
     // dying → dead: donate healthy organs
@@ -1220,7 +1275,7 @@ async function doDegrade(patients,p){
   if(p.status==='dying') toast('Patient dog 💀','warn');
   else toast(`Patient försämras till ${p.status==='stable'?'Sjuk':'Döende'}`,'warn');
   await update(ref(db,`rooms/${roomCode}`),{patientQueue:updQ,lastWinner:null});
-  setTimeout(advanceSell,1200);
+  setTimeout(advanceSell,2500);
 }
 
 // ── ADVANCE ───────────────────────────────────────────────
@@ -1231,8 +1286,10 @@ async function advanceBuy(){
   if(nextIdx>=(gs.organQueue||[]).length){
     const patients=(gs.patientQueue||[]).filter(p=>!p.dead);
     const ordered=[...patients.filter(p=>p.status==='dying'),...patients.filter(p=>p.status==='sick'),...patients.filter(p=>p.status==='stable')];
+    // Create fixed sellOrder (list of patient IDs in queue order) — fixes skipped-patient bug
+    const sellOrder=ordered.map(p=>p.id);
     await update(ref(db,`rooms/${roomCode}`),{
-      phase:'sell',currentSellIndex:0,patientQueue:ordered,
+      phase:'sell',currentSellIndex:0,patientQueue:ordered,sellOrder,
       timerStart:serverNow(),timerDuration:spd.sell,
       lastWinner:null,phaseMsg:'SÄLJFAS — Klicka när priset är rätt!'
     });
@@ -1248,14 +1305,12 @@ async function advanceBuy(){
 async function advanceSell(){
   if(!isHost) return;
   const gs=gameState,spd=getSpeed();
-  const patients=gs.patientQueue||[];
-  const active=getActiveSellPatients(patients);
+  const sellOrder=gs.sellOrder||[];
   const nextIdx=(gs.currentSellIndex||0)+1;
 
-  if(nextIdx>=active.length){
-    // End of round
-    const curr=gs.currentRound||1,total=gs.totalRounds||3;
-    await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'between'});
+  if(nextIdx>=sellOrder.length){
+    // End of sell phase — show round-end screen (host clicks to continue)
+    await update(ref(db,`rooms/${roomCode}`),{status:'roundend',phaseMsg:'Runda slut!'});
   } else {
     await update(ref(db,`rooms/${roomCode}`),{
       currentSellIndex:nextIdx,
@@ -1269,7 +1324,7 @@ async function organExpired(){
   if(!isHost) return;
   flash('red');toast('Organet försvann — ingen köpte','err');
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:'NONE',phaseMsg:'Organet försvann!'});
-  setTimeout(advanceBuy,1500);
+  setTimeout(advanceBuy,2500);
 }
 
 // Watch other-player advances
@@ -1280,8 +1335,8 @@ setInterval(()=>{
   if(lw!==_prevLW){_prevLW=lw;
     if(lw!==myPlayerId&&lw!=='NONE'){
       const gs=gameState;
-      if(gs.phase==='buy') setTimeout(advanceBuy,1500);
-      else if(gs.phase==='sell') setTimeout(advanceSell,1500);
+      if(gs.phase==='buy') setTimeout(advanceBuy,2500);
+      else if(gs.phase==='sell') setTimeout(advanceSell,2500);
     }
   }
 },300);
@@ -1307,10 +1362,10 @@ function showBetween(){
   const container=document.getElementById('betweenPlayers');container.innerHTML='';
   Object.entries(players).forEach(([pid,p])=>{
     const row=document.createElement('div');row.className='bp-row';
-    const inv=Object.keys(p.inventory||{});
+    const inv=invList(p.inventory||{});
     const cured=p.cured||0;
 
-    // Organ pills
+    // Organ pills (count-based — multiple of same organ shown separately)
     let invHTML='<div class="bp-inv">';
     if(!inv.length) invHTML+='<span style="font-size:.62rem;color:var(--muted);">Tomt lager</span>';
     else inv.forEach(orgId=>{
@@ -1390,6 +1445,24 @@ window.openModal=function(bild){
 };
 window.closeModal=function(){document.getElementById('patientModal').classList.remove('open');};
 window.closeModalOutside=function(e){if(e.target===document.getElementById('patientModal'))closeModal();};
+
+// ── ROUND END ─────────────────────────────────────────────
+function showRoundEnd(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  showScreen('screen-game');
+  const overlay=document.getElementById('roundEndOverlay');
+  overlay.classList.add('open');
+  document.getElementById('roundEndBtn').classList.toggle('hidden',!isHost);
+  document.getElementById('roundEndWait').classList.toggle('hidden',isHost);
+}
+
+window.hostEndRound=async function(){
+  if(!isHost) return;
+  document.getElementById('roundEndOverlay').classList.remove('open');
+  const gs=gameState;
+  const curr=gs.currentRound||1,total=gs.totalRounds||3;
+  await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'between'});
+};
 </script>
 </body>
 </html>
