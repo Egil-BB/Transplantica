@@ -7,9 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════════════════
-   THEME: Teal + Orange (matching box art)
-══════════════════════════════════════════════ */
 :root {
   --bg:    #09141a;
   --bg2:   #0d1e26;
@@ -45,7 +42,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14
 .btn-primary{background:var(--teal);color:#09141a;}
 .btn-primary:hover:not(:disabled){background:var(--teal2);}
 .btn-orange{background:var(--orange);color:#fff;}
-.btn-orange:hover:not(:disabled){background:var(--orange2);}
 .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);}
 .btn-ghost:hover:not(:disabled){border-color:var(--teal);color:var(--teal);}
 input{background:var(--bg3);border:1px solid var(--line);color:var(--text);font-family:var(--mono);font-size:1rem;padding:.7rem 1rem;width:100%;outline:none;transition:border-color .2s;}
@@ -56,9 +52,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .divider-line::before,.divider-line::after{content:'';flex:1;height:1px;background:var(--line);}
 .hidden{display:none!important;}
 
-/* ══════════════════════════════════════════════
-   LOBBY
-══════════════════════════════════════════════ */
+/* ── LOBBY ── */
 #screen-lobby{overflow-y:auto;}
 .lobby-inner{display:flex;flex-direction:column;align-items:center;gap:1.1rem;padding:1.2rem 1rem;justify-content:center;min-height:100%;}
 .logo-img-wrap{width:100%;max-width:440px;}
@@ -66,14 +60,11 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .lobby-box{width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--line);border-top:2px solid var(--teal);padding:1.1rem;display:flex;flex-direction:column;gap:.65rem;}
 .lobby-box h2{font-family:var(--disp);font-size:.78rem;letter-spacing:.3em;color:var(--muted);}
 
-/* ══════════════════════════════════════════════
-   WAITING
-══════════════════════════════════════════════ */
+/* ── WAITING ── */
 #screen-waiting{overflow-y:auto;}
 .waiting-inner{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 1rem;justify-content:center;min-height:100%;}
-.code-display{text-align:center;}
-.cd-label{font-size:.62rem;letter-spacing:.4em;color:var(--muted);margin-bottom:.2rem;}
-.cd-code{font-family:var(--disp);font-size:clamp(3.5rem,18vw,6rem);color:var(--teal);letter-spacing:.25em;text-shadow:0 0 40px rgba(46,184,200,.4);line-height:1;}
+.cd-label{font-size:.62rem;letter-spacing:.4em;color:var(--muted);margin-bottom:.2rem;text-align:center;}
+.cd-code{font-family:var(--disp);font-size:clamp(3.5rem,18vw,6rem);color:var(--teal);letter-spacing:.25em;text-shadow:0 0 40px rgba(46,184,200,.4);line-height:1;text-align:center;}
 .plist-box{width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--line);padding:.85rem 1rem;}
 .plist-box h3{font-size:.6rem;letter-spacing:.28em;color:var(--muted);margin-bottom:.55rem;}
 .player-row{display:flex;align-items:center;gap:.55rem;padding:.32rem 0;border-bottom:1px solid var(--line);font-size:.88rem;font-weight:700;}
@@ -83,34 +74,29 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .settings-row{width:100%;max-width:440px;display:flex;align-items:center;gap:1rem;background:var(--bg2);border:1px solid var(--line);padding:.65rem 1rem;}
 .settings-row label{flex:1;font-size:.85rem;font-weight:700;}
 
-/* ══════════════════════════════════════════════
-   OVERVIEW
-══════════════════════════════════════════════ */
+/* ── OVERVIEW ── */
 .ov-topbar{display:flex;align-items:center;background:var(--bg2);border-bottom:2px solid var(--teal);padding:.4rem .65rem;gap:.4rem;flex-shrink:0;}
 .ov-title{font-family:var(--disp);font-size:1.15rem;letter-spacing:.12em;color:var(--teal);flex:1;}
 .ov-meta{font-size:.55rem;letter-spacing:.12em;color:var(--muted);}
 .ov-money{font-family:var(--disp);font-size:1.15rem;color:var(--green2);}
-
 .ov-body{flex:1;display:flex;overflow:hidden;min-height:0;}
-.ov-organs{flex:0 0 62px;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
-.ov-organs-hdr{padding:.28rem .3rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.5rem;letter-spacing:.18em;color:var(--muted);text-align:center;flex-shrink:0;}
+.ov-organs{flex:0 0 60px;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.ov-organs-hdr{padding:.25rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.5rem;letter-spacing:.15em;color:var(--muted);text-align:center;flex-shrink:0;}
 .ov-organs-scroll{flex:1;overflow-y:auto;scrollbar-width:none;}
 .ov-organs-scroll::-webkit-scrollbar{display:none;}
-.ov-organ-thumb{padding:.25rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
-.ov-organ-thumb img{width:40px;height:40px;object-fit:contain;display:block;border-radius:2px;}
-
+.ov-organ-thumb{padding:.22rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
+.ov-organ-thumb img{width:38px;height:38px;object-fit:contain;display:block;border-radius:2px;}
 .ov-pcols{flex:1;display:flex;overflow:hidden;}
 .ov-pcol{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden;}
 .ov-pcol:last-child{border-right:none;}
-.ov-pcol-hdr{padding:.28rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.78rem;text-align:center;flex-shrink:0;}
+.ov-pcol-hdr{padding:.26rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.75rem;text-align:center;flex-shrink:0;}
 .ov-pcol-hdr.dying{color:var(--red2);}
 .ov-pcol-hdr.sick{color:var(--orange2);}
 .ov-pcol-hdr.stable{color:var(--green2);}
-.ov-pcol-scroll{flex:1;overflow-y:auto;padding:.2rem;display:grid;grid-template-columns:1fr 1fr;gap:.18rem;align-content:start;scrollbar-width:none;}
+.ov-pcol-scroll{flex:1;overflow-y:auto;padding:.18rem;display:grid;grid-template-columns:1fr 1fr;gap:.16rem;align-content:start;scrollbar-width:none;}
 .ov-pcol-scroll::-webkit-scrollbar{display:none;}
 .ov-pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;}
 .ov-pcard img{width:100%;display:block;aspect-ratio:508/733;object-fit:cover;}
-
 .ov-ready{background:var(--bg2);border-top:2px solid var(--line);padding:.45rem .65rem;display:flex;flex-direction:column;gap:.3rem;flex-shrink:0;}
 .ready-chips{display:flex;gap:.28rem;flex-wrap:wrap;}
 .rchip{font-size:.68rem;padding:.18rem .42rem;border:1px solid var(--line);color:var(--muted);}
@@ -118,53 +104,65 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .rchip.me{border-color:var(--teal);}
 .rchip.me.done{border-color:var(--green2);color:var(--green2);}
 
-/* ══════════════════════════════════════════════
-   GAME SCREEN
-══════════════════════════════════════════════ */
-#screen-game{max-width:480px;margin:0 auto;width:100%;}
+/* ── BETWEEN ROUNDS (inventories, no scores) ── */
+#screen-between{overflow-y:auto;}
+.between-inner{display:flex;flex-direction:column;align-items:center;gap:1.1rem;padding:1.2rem 1rem;min-height:100%;}
+.between-title{font-family:var(--disp);font-size:2rem;letter-spacing:.15em;color:var(--teal);text-align:center;}
+.between-subtitle{font-size:.7rem;letter-spacing:.2em;color:var(--muted);text-align:center;}
+.between-players{width:100%;max-width:480px;display:flex;flex-direction:column;gap:.7rem;}
+.bp-row{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--teal);padding:.6rem .75rem;}
+.bp-name{font-family:var(--disp);font-size:1rem;letter-spacing:.1em;color:var(--teal);margin-bottom:.4rem;}
+.bp-inv{display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem;}
+.bp-cured{display:flex;gap:.2rem;flex-wrap:wrap;align-items:center;}
+/* organ pill: image only, no text */
+.org-pill{border:1px solid var(--line);border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.org-pill img{width:32px;height:32px;object-fit:contain;display:block;}
+.org-pill.hjärta{background:var(--heart-bg);}
+.org-pill.lungor{background:var(--lung-bg);}
+.org-pill.njurar{background:var(--kidney-bg);}
+.org-pill.lever{background:var(--liver-bg);}
+/* cured patient thumb */
+.cured-thumb{width:28px;height:40px;object-fit:cover;border:1px solid var(--green2);border-radius:2px;opacity:.85;}
+.bp-meta{font-size:.62rem;color:var(--muted);}
 
+/* ── GAME ── */
+#screen-game{max-width:480px;margin:0 auto;width:100%;}
 .topbar{display:flex;align-items:center;background:var(--bg2);border-bottom:2px solid var(--teal);padding:.38rem .55rem;gap:.38rem;flex-shrink:0;}
 .topbar-phase{font-family:var(--disp);font-size:1rem;letter-spacing:.12em;color:var(--teal);flex:1;line-height:1.1;}
 .topbar-round{font-size:.5rem;letter-spacing:.15em;color:var(--muted);}
 .topbar-money{font-family:var(--disp);font-size:1.1rem;color:var(--green2);}
 .topbar-loan{background:transparent;border:1px solid var(--orange);color:var(--orange);font-family:var(--mono);font-size:.55rem;padding:.2rem .32rem;cursor:pointer;letter-spacing:.07em;white-space:nowrap;line-height:1.35;transition:all .12s;}
 .topbar-loan:hover{background:var(--orange);color:var(--bg);}
-
 .players-bar{display:flex;gap:.22rem;overflow-x:auto;padding:.22rem .4rem;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none;}
 .players-bar::-webkit-scrollbar{display:none;}
 .pchip{flex-shrink:0;background:var(--bg3);border:1px solid var(--line);padding:.13rem .38rem;font-size:.58rem;font-weight:700;white-space:nowrap;}
 .pchip.me{border-color:var(--teal);color:var(--teal);}
 .pchip .pm{color:var(--green2);font-size:.52rem;}
 
-/* ── BUY AREA ── */
-/* Left: big current organ + price. Right: queue grid */
+/* BUY AREA: big organ left, queue right */
 .buy-area{display:flex;flex-shrink:0;border-bottom:2px solid var(--line);}
-
-/* Current organ — big left column */
 .buy-current-col{flex:0 0 50%;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg2);}
-.buy-organ-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.4rem;}
-.buy-organ-img-wrap .organ-bg{border-radius:4px;padding:6px;display:flex;align-items:center;justify-content:center;}
-.buy-organ-img-wrap .organ-bg img{width:80px;height:80px;object-fit:contain;display:block;}
-.buy-organ-img-wrap .organ-bg.hjärta{background:var(--heart-bg);}
-.buy-organ-img-wrap .organ-bg.lungor{background:var(--lung-bg);}
-.buy-organ-img-wrap .organ-bg.njurar{background:var(--kidney-bg);}
-.buy-organ-img-wrap .organ-bg.lever{background:var(--liver-bg);}
-
-.price-block{padding:.35rem .55rem .3rem;border-top:1px solid var(--line);}
+.buy-organ-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.45rem;}
+.buy-organ-bg{border-radius:4px;padding:6px;display:flex;align-items:center;justify-content:center;}
+.buy-organ-bg img{width:82px;height:82px;object-fit:contain;display:block;}
+.buy-organ-bg.hjärta{background:var(--heart-bg);}
+.buy-organ-bg.lungor{background:var(--lung-bg);}
+.buy-organ-bg.njurar{background:var(--kidney-bg);}
+.buy-organ-bg.lever{background:var(--liver-bg);}
+.price-block{padding:.35rem .55rem .28rem;border-top:1px solid var(--line);}
 .price-label{font-size:.5rem;letter-spacing:.28em;color:var(--muted);}
 .price-val{font-family:var(--disp);font-size:clamp(2rem,10vw,3rem);line-height:1;transition:color .2s;}
 .price-val.high{color:var(--green2);}
 .price-val.mid{color:var(--orange2);}
 .price-val.low{color:var(--red2);}
 .price-bar{height:3px;background:var(--line);position:relative;margin-top:.18rem;}
-.price-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .1s linear,background .3s;}
-
+.price-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .08s linear,background .3s;}
 .buy-action-row{padding:.35rem;border-top:1px solid var(--line);flex-shrink:0;}
 .btn-buy{font-family:var(--disp);font-size:1.1rem;letter-spacing:.14em;padding:.65rem .4rem;border:none;cursor:pointer;transition:all .12s;width:100%;background:var(--orange);color:#fff;}
 .btn-buy:active:not(:disabled){transform:scale(0.96);}
 .btn-buy:disabled{opacity:.3;cursor:not-allowed;transform:none!important;}
 
-/* Organ queue — right column, image-only grid */
+/* Organ queue: image-ONLY grid, no text anywhere */
 .organ-q-col{flex:0 0 50%;display:flex;flex-direction:column;overflow:hidden;}
 .oq-hdr{padding:.28rem .45rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.55rem;letter-spacing:.2em;color:var(--muted);display:flex;justify-content:space-between;flex-shrink:0;}
 .oq-grid{flex:1;overflow-y:auto;padding:.22rem;display:grid;grid-template-columns:1fr 1fr;gap:.22rem;align-content:start;scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
@@ -175,83 +173,76 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .oq-card.njurar{background:var(--kidney-bg);}
 .oq-card.lever{background:var(--liver-bg);}
 
-/* ── STATUS BANNER ── */
+/* STATUS */
 .status-banner{background:var(--bg3);border-bottom:1px solid var(--line);padding:.28rem .6rem;font-size:.7rem;color:var(--teal);letter-spacing:.04em;min-height:1.8rem;display:flex;align-items:center;flex-shrink:0;}
 
-/* ── SELL AREA ── */
+/* SELL AREA */
 .sell-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-
-/* Sell top: current patient big + inventory side by side */
-.sell-top{display:none;flex-shrink:0;border-bottom:2px solid var(--line);}
+.sell-top{display:none;flex-shrink:0;border-bottom:2px solid var(--line);max-height:48vh;}
 .sell-top.vis{display:flex;}
 
-/* Current patient big card */
-.sell-patient-col{flex:0 0 42%;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg2);overflow:hidden;}
+/* Patient big image */
+.sell-patient-col{flex:0 0 38%;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg2);overflow:hidden;}
 .sell-patient-img{flex:1;overflow:hidden;}
 .sell-patient-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.sell-patient-status{padding:.18rem;background:var(--bg3);border-top:1px solid var(--line);font-size:.62rem;text-align:center;flex-shrink:0;}
-.sell-patient-status.dying{color:var(--red2);}
-.sell-patient-status.sick{color:var(--orange2);}
-.sell-patient-status.stable{color:var(--green2);}
+.sell-patient-status-bar{padding:.15rem;background:var(--bg3);border-top:1px solid var(--line);font-size:.6rem;text-align:center;flex-shrink:0;}
+.sell-patient-status-bar.dying{color:var(--red2);}
+.sell-patient-status-bar.sick{color:var(--orange2);}
+.sell-patient-status-bar.stable{color:var(--green2);}
 
-/* Sell right: inventory + timer + sell button */
+/* Right side */
 .sell-right-col{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
-.inv-section{padding:.3rem .5rem;border-bottom:1px solid var(--line);flex-shrink:0;}
-.inv-lbl{font-size:.48rem;letter-spacing:.18em;color:var(--muted);margin-bottom:.18rem;}
-.inv-items{display:flex;gap:.22rem;flex-wrap:wrap;}
-.inv-item{border:1px solid var(--line);padding:.1rem .25rem;font-size:.6rem;color:var(--text);display:flex;align-items:center;gap:.18rem;border-radius:2px;}
-.inv-item img{width:18px;height:18px;object-fit:contain;border-radius:2px;}
-.inv-item.needed{border-color:var(--teal);}
-.inv-item.neutral{border-color:var(--muted);}
-.inv-empty-txt{font-size:.6rem;color:var(--muted);}
+/* Inventory — image only, generous size */
+.inv-section{padding:.3rem .45rem;border-bottom:1px solid var(--line);flex-shrink:0;}
+.inv-lbl{font-size:.46rem;letter-spacing:.18em;color:var(--muted);margin-bottom:.2rem;}
+.inv-pills{display:flex;gap:.25rem;flex-wrap:wrap;}
 
-/* needed organs for current patient */
-.sell-needed{padding:.3rem .5rem;border-bottom:1px solid var(--line);flex-shrink:0;}
-.sn-lbl{font-size:.48rem;letter-spacing:.18em;color:var(--muted);margin-bottom:.15rem;}
-.sn-organs{display:flex;gap:.2rem;flex-wrap:wrap;}
-.sn-org{font-size:.65rem;padding:.08rem .28rem;border:1px solid var(--line);}
-.sn-org.have{border-color:var(--green2);color:var(--green2);}
-.sn-org.need{border-color:var(--red2);color:var(--red2);}
+/* Needed organs — image only */
+.sell-needed-row{padding:.28rem .45rem;border-bottom:1px solid var(--line);flex-shrink:0;}
+.sn-lbl{font-size:.46rem;letter-spacing:.18em;color:var(--muted);margin-bottom:.18rem;}
+.sn-pills{display:flex;gap:.22rem;flex-wrap:wrap;}
+/* organ image pill: have = green border, need = red border */
+.org-pill-lg{border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2px solid transparent;}
+.org-pill-lg img{width:38px;height:38px;object-fit:contain;display:block;}
+.org-pill-lg.hjärta{background:var(--heart-bg);}
+.org-pill-lg.lungor{background:var(--lung-bg);}
+.org-pill-lg.njurar{background:var(--kidney-bg);}
+.org-pill-lg.lever{background:var(--liver-bg);}
+.org-pill-lg.have{border-color:var(--green2);}
+.org-pill-lg.need{border-color:var(--red2);}
+.org-pill-lg.inv-own{border-color:var(--teal);}
 
-/* sell timer */
-.sell-timer-block{padding:.3rem .5rem;border-bottom:1px solid var(--line);flex-shrink:0;}
-.stl{font-size:.48rem;letter-spacing:.18em;color:var(--muted);}
-.stv{font-family:var(--disp);font-size:1.1rem;letter-spacing:.06em;color:var(--orange2);}
-.st-bar{height:3px;background:var(--line);position:relative;margin:.12rem 0;}
-.st-fill{position:absolute;left:0;top:0;height:100%;transition:width .1s linear;}
+/* Max price / timer */
+.sell-price-block{padding:.28rem .45rem;border-bottom:1px solid var(--line);flex-shrink:0;}
+.sp-lbl{font-size:.46rem;letter-spacing:.18em;color:var(--muted);}
+.sp-val{font-family:var(--disp);font-size:1.3rem;color:var(--orange2);}
+.st-bar{height:3px;background:var(--line);position:relative;margin:.1rem 0;}
+.st-fill{position:absolute;left:0;top:0;height:100%;transition:width .08s linear;}
 
-.sell-btn-row{padding:.3rem .5rem;flex-shrink:0;}
-.btn-sell{font-family:var(--disp);font-size:1rem;letter-spacing:.12em;padding:.6rem .4rem;border:none;cursor:pointer;background:var(--green);color:#fff;width:100%;transition:all .12s;}
+.sell-btn-wrap{padding:.28rem .45rem;flex-shrink:0;}
+.btn-sell{font-family:var(--disp);font-size:.95rem;letter-spacing:.12em;padding:.55rem .4rem;border:none;cursor:pointer;background:var(--green);color:#fff;width:100%;transition:all .12s;}
 .btn-sell:active:not(:disabled){transform:scale(0.96);}
 .btn-sell:disabled{opacity:.3;cursor:not-allowed;transform:none!important;}
 
-/* budget display when only-seller */
-.sell-maxprice{padding:.3rem .5rem;border-bottom:1px solid var(--line);flex-shrink:0;display:none;}
-.sell-maxprice.vis{display:block;}
-.smp-lbl{font-size:.48rem;letter-spacing:.18em;color:var(--muted);}
-.smp-val{font-family:var(--disp);font-size:1.4rem;color:var(--orange2);}
-
-/* ── PATIENT COLUMNS (queue) ── */
-.sell-hdr{display:flex;align-items:center;justify-content:space-between;padding:.28rem .6rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.55rem;letter-spacing:.2em;color:var(--muted);flex-shrink:0;}
-.sell-active-lbl{color:var(--red2);font-size:.6rem;font-weight:700;}
-
+/* Patient queue columns */
+.sell-hdr{display:flex;align-items:center;justify-content:space-between;padding:.26rem .6rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.55rem;letter-spacing:.2em;color:var(--muted);flex-shrink:0;}
+.sell-active-lbl{color:var(--red2);font-size:.58rem;font-weight:700;}
 .patient-cols{flex:1;display:flex;overflow:hidden;min-height:0;}
 .pcol{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden;}
 .pcol:last-child{border-right:none;}
-.pcol-hdr{padding:.26rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.75rem;text-align:center;flex-shrink:0;}
+.pcol-hdr{padding:.24rem .2rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.72rem;text-align:center;flex-shrink:0;}
 .pcol-hdr.dying{color:var(--red2);}
 .pcol-hdr.sick{color:var(--orange2);}
 .pcol-hdr.stable{color:var(--green2);}
-.pcol-scroll{flex:1;overflow-y:auto;padding:.18rem;display:grid;grid-template-columns:1fr 1fr;gap:.18rem;align-content:start;scrollbar-width:none;}
+.pcol-scroll{flex:1;overflow-y:auto;padding:.16rem;display:grid;grid-template-columns:1fr 1fr;gap:.16rem;align-content:start;scrollbar-width:none;}
 .pcol-scroll::-webkit-scrollbar{display:none;}
-.pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;position:relative;transition:border-color .12s;}
+.pcard{background:var(--bg2);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .12s;}
 .pcard:active{transform:scale(0.97);}
 .pcard.can-sell{border-color:var(--green2);}
-.pcard.current{border:2px solid var(--orange);display:none;} /* hidden from queue when being sold */
 .pcard img{width:100%;display:block;aspect-ratio:508/733;object-fit:cover;}
 
-/* ── SCORES ── */
+/* ── FINAL SCORES ── */
 #screen-scores{overflow-y:auto;}
 .scores-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem;padding:2rem 1rem;min-height:100%;justify-content:center;}
 .scores-inner h2{font-family:var(--disp);font-size:1.9rem;letter-spacing:.15em;color:var(--teal);}
@@ -264,11 +255,11 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .score-money{font-family:var(--disp);color:var(--green2);font-size:.92rem;}
 .score-pts{font-family:var(--disp);color:var(--teal);font-size:.78rem;min-width:48px;text-align:right;}
 
-/* ── MODAL: enlarged patient image ── */
+/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;}
 .modal-img-wrap{position:relative;max-width:260px;width:100%;}
-.modal-img-wrap img{width:100%;display:block;border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,.7);}
+.modal-img-wrap img{width:100%;display:block;border-radius:4px;}
 .modal-close-btn{position:absolute;top:-13px;right:-13px;background:var(--bg2);border:1px solid var(--teal);color:var(--teal);width:27px;height:27px;border-radius:50%;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
 /* ── FLASH / TOAST ── */
@@ -290,12 +281,12 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 <body>
 <div class="flash-overlay" id="flashOverlay"></div>
 
-<!-- ══════════ LOBBY ══════════ -->
+<!-- LOBBY -->
 <div id="screen-lobby" class="screen active">
   <div class="lobby-inner">
     <div class="logo-img-wrap">
       <img src="images/ui/locket.png" alt="Transplantica"
-        onerror="this.outerHTML='<div style=\'font-family:var(--disp);font-size:2.8rem;color:var(--teal);letter-spacing:.1em;text-align:center;padding:.8rem 0;\'>TRANSPLANTICA</div>'">
+        onerror="this.outerHTML='<div style=\'font-family:var(--disp);font-size:2.8rem;color:var(--teal);text-align:center;padding:.8rem 0;\'>TRANSPLANTICA</div>'">
     </div>
     <div class="lobby-box">
       <h2>Ditt namn</h2>
@@ -311,30 +302,27 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
 </div>
 
-<!-- ══════════ WAITING ══════════ -->
+<!-- WAITING -->
 <div id="screen-waiting" class="screen">
   <div class="waiting-inner">
-    <div class="code-display">
-      <div class="cd-label">RUMSKOD — DELA MED VÄNNER</div>
-      <div class="cd-code" id="displayCode">----</div>
-    </div>
+    <div><div class="cd-label">RUMSKOD — DELA MED VÄNNER</div><div class="cd-code" id="displayCode">----</div></div>
     <div class="plist-box" id="waitingPlayerList"><h3>ANSLUTNA SPELARE</h3></div>
     <div class="settings-row" id="diffRow">
       <label>Svårighetsgrad:</label>
       <select id="difficultySelect">
-        <option value="easy">Lätt (långsam timer)</option>
+        <option value="easy">Lätt (långsam)</option>
         <option value="normal" selected>Normal</option>
-        <option value="hard">Svårt (snabb timer)</option>
+        <option value="hard">Svårt (snabb)</option>
       </select>
     </div>
-    <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:.5rem;">
+    <div style="width:100%;max-width:440px;">
       <button class="btn btn-primary" id="startGameBtn" onclick="hostStartGame()">STARTA SPEL</button>
     </div>
     <div class="err" id="waitingError"></div>
   </div>
 </div>
 
-<!-- ══════════ OVERVIEW ══════════ -->
+<!-- OVERVIEW (pre-round briefing) -->
 <div id="screen-overview" class="screen">
   <div class="ov-topbar">
     <div style="flex:1">
@@ -348,7 +336,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
   <div class="ov-body">
     <div class="ov-organs">
-      <div class="ov-organs-hdr">ORGAN</div>
+      <div class="ov-organs-hdr">KÖ</div>
       <div class="ov-organs-scroll" id="ovOrganList"></div>
     </div>
     <div class="ov-pcols">
@@ -363,7 +351,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
 </div>
 
-<!-- ══════════ GAME ══════════ -->
+<!-- GAME -->
 <div id="screen-game" class="screen">
   <div class="topbar">
     <div style="flex:1">
@@ -378,11 +366,11 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
   <div class="players-bar" id="playersBar"></div>
 
-  <!-- BUY AREA: big current organ left, queue right -->
+  <!-- BUY AREA -->
   <div class="buy-area" id="buyArea">
     <div class="buy-current-col">
-      <div class="buy-organ-img-wrap">
-        <div class="organ-bg" id="buyOrganBg">
+      <div class="buy-organ-wrap">
+        <div class="buy-organ-bg" id="buyOrganBg">
           <img id="buyOrganImg" src="" alt="">
         </div>
       </div>
@@ -392,9 +380,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
         <div class="price-bar"><div class="price-bar-fill" id="priceBarFill" style="width:100%;background:var(--green2)"></div></div>
       </div>
       <div class="buy-action-row">
-        <button class="btn-buy" id="buyBtn" onclick="handleBuy()">
-          KÖPA — <span id="buyBtnPrice">30.0</span> KR
-        </button>
+        <button class="btn-buy" id="buyBtn" onclick="handleBuy()">KÖPA — <span id="buyBtnPrice">30.0</span> KR</button>
       </div>
     </div>
     <div class="organ-q-col">
@@ -407,53 +393,37 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 
   <!-- SELL AREA -->
   <div class="sell-area">
-
-    <!-- Current patient (big) + inventory + timer — only visible in sell phase -->
+    <!-- Current patient big + inv + timer -->
     <div class="sell-top" id="sellTop">
-      <!-- Big patient image -->
       <div class="sell-patient-col">
-        <div class="sell-patient-img">
-          <img id="sellPatientImg" src="" alt="">
-        </div>
-        <div class="sell-patient-status" id="sellPatientStatus">💀 Döende</div>
+        <div class="sell-patient-img"><img id="sellPatientImg" src="" alt=""></div>
+        <div class="sell-patient-status-bar" id="sellPatientStatusBar">Döende</div>
       </div>
-      <!-- Right side: inventory, needed organs, timer, sell btn -->
       <div class="sell-right-col">
         <div class="inv-section">
           <div class="inv-lbl">MITT LAGER</div>
-          <div class="inv-items" id="sellInvItems"><span class="inv-empty-txt">–</span></div>
+          <div class="inv-pills" id="sellInvPills"></div>
         </div>
-        <div class="sell-needed">
+        <div class="sell-needed-row">
           <div class="sn-lbl">PATIENTEN BEHÖVER</div>
-          <div class="sn-organs" id="sellNeeded"></div>
+          <div class="sn-pills" id="sellNeededPills"></div>
         </div>
-        <!-- Only-seller mode: show fixed max price -->
-        <div class="sell-maxprice" id="sellMaxPrice">
-          <div class="smp-lbl">MAXPRIS (du är enda säljare)</div>
-          <div class="smp-val" id="sellMaxPriceVal">0.0 KR</div>
-        </div>
-        <!-- Timer mode -->
-        <div class="sell-timer-block" id="sellTimerBlock">
-          <div class="stl">BASPRIS</div>
-          <div class="stv" id="sellTimerVal">0.0 KR</div>
+        <div class="sell-price-block" id="sellPriceBlock">
+          <div class="sp-lbl" id="sellPriceLbl">BASPRIS</div>
+          <div class="sp-val" id="sellPriceVal">0.0 KR</div>
           <div class="st-bar"><div class="st-fill" id="stFill" style="width:0%"></div></div>
         </div>
-        <div class="sell-btn-row">
-          <button class="btn-sell" id="sellBtn" onclick="handleSell()">
-            SÄLJA — <span id="sellBtnPrice">0.0</span> KR
-          </button>
+        <div class="sell-btn-wrap">
+          <button class="btn-sell" id="sellBtn" onclick="handleSell()">SÄLJA — <span id="sellBtnPrice">0.0</span> KR</button>
         </div>
       </div>
     </div>
 
-    <!-- Patient queue header -->
     <div class="sell-hdr">
       <span>PATIENTKÖ</span>
       <span class="sell-active-lbl hidden" id="sellActiveLbl">▶ SÄLJFAS</span>
       <span style="color:var(--muted)" id="patientQCount">0 st</span>
     </div>
-
-    <!-- Three status columns -->
     <div class="patient-cols">
       <div class="pcol"><div class="pcol-hdr dying">💀</div><div class="pcol-scroll" id="pcolDying"></div></div>
       <div class="pcol"><div class="pcol-hdr sick">💔</div><div class="pcol-scroll" id="pcolSick"></div></div>
@@ -462,20 +432,29 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
 </div>
 
-<!-- ══════════ SCORES ══════════ -->
-<div id="screen-scores" class="screen">
-  <div class="scores-inner">
-    <h2 id="scoresTitle">RUNDA SLUT</h2>
-    <div class="score-table" id="scoreTable"></div>
-    <div style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:.5rem;">
+<!-- BETWEEN ROUNDS: inventories + cured count, NO scores -->
+<div id="screen-between" class="screen">
+  <div class="between-inner">
+    <div class="between-title">RUNDA <span id="betweenRound">1</span> SLUT</div>
+    <div class="between-subtitle">POÄNG HÅLLS HEMLIGA TILLS SPELET ÄR SLUT</div>
+    <div class="between-players" id="betweenPlayers"></div>
+    <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:.5rem;">
       <button class="btn btn-primary hidden" id="nextRoundBtn" onclick="hostNextRound()">NÄSTA RUNDA →</button>
-      <button class="btn btn-ghost hidden" id="finalLobbyBtn" onclick="location.reload()">NYTT SPEL</button>
       <div style="font-size:.7rem;color:var(--muted);text-align:center;" id="waitHostMsg" class="hidden">Väntar på värden...</div>
     </div>
   </div>
 </div>
 
-<!-- Modal: big patient image only -->
+<!-- FINAL SCORES -->
+<div id="screen-scores" class="screen">
+  <div class="scores-inner">
+    <h2>SLUTRESULTAT</h2>
+    <div class="score-table" id="scoreTable"></div>
+    <button class="btn btn-ghost" style="width:100%;max-width:400px;margin-top:.5rem;" onclick="location.reload()">NYTT SPEL</button>
+  </div>
+</div>
+
+<!-- Patient modal: big image -->
 <div class="modal-overlay" id="patientModal" onclick="closeModalOutside(event)">
   <div class="modal-img-wrap">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -485,10 +464,10 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update }
+import { getDatabase, ref, set, get, onValue, update, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ── FIREBASE CONFIG ──────────────────────────────────────
+// ── FIREBASE ─────────────────────────────────────────────
 let firebaseConfig;
 try{const c=await import('./config.js').catch(()=>null);firebaseConfig=c?.default||c?.firebaseConfig;}catch(e){}
 if(!firebaseConfig) firebaseConfig={
@@ -503,15 +482,21 @@ if(!firebaseConfig) firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 
+// ── TIMER SYNC ───────────────────────────────────────────
+// We store timerStart as a Unix ms timestamp in Firebase (set by host).
+// ALL clients read it from gameState and compute elapsed the same way.
+// This means lag from Firebase propagation is the only source of desync,
+// which is typically <200ms — acceptable. We do NOT use Date.now() on
+// non-host clients for timer purposes.
+
 // ── STATIC DATA ──────────────────────────────────────────
 const ORGAN_DATA={
-  hjärta:{name:'Hjärta',img:'images/organ/hjärta.png',emoji:'🫀',weight:1},
-  lungor:{name:'Lungor',img:'images/organ/lungor.png',emoji:'🫁',weight:2},
-  njurar:{name:'Njurar',img:'images/organ/njurar.png',emoji:'🫘',weight:1},
-  lever: {name:'Lever', img:'images/organ/lever.png', emoji:'🍖',weight:1},
+  hjärta:{name:'Hjärta',img:'images/organ/hjärta.png',weight:1},
+  lungor:{name:'Lungor',img:'images/organ/lungor.png',weight:2},
+  njurar:{name:'Njurar',img:'images/organ/njurar.png',weight:1},
+  lever: {name:'Lever', img:'images/organ/lever.png', weight:1},
 };
 
-// Player counts (from Sheet6) + 1-player test mode
 const PLAYER_COUNTS={
   1:{organPerRunda:3, stable:2,sick:1,dying:1,rundor:2},
   2:{organPerRunda:6, stable:2,sick:1,dying:1,rundor:4},
@@ -521,20 +506,20 @@ const PLAYER_COUNTS={
   6:{organPerRunda:18,stable:5,sick:4,dying:3,rundor:3},
 };
 
-// Difficulty only affects SPEED of timer (in seconds), NOT price amounts
-// Buy max is always 30 kr. Sell max = patient's budget.
-const DIFFICULTY_SPEED={
-  easy:   {buySpeed:30, sellSpeed:30}, // slow = more time to react
-  normal: {buySpeed:15, sellSpeed:15},
-  hard:   {buySpeed:6,  sellSpeed:6},
+// Difficulty = timer SPEED only. Buy price always 30→0. Sell price 0→patient budget.
+const SPEEDS={
+  easy:  {buy:30, sell:30},
+  normal:{buy:15, sell:15},
+  hard:  {buy:6,  sell:6},
 };
-
+const BUY_MAX=30;
 const STARTKAPITAL=40;
 const LOAN_AMOUNT=10;
-const LOAN_PENALTY=2; // pts per loan
-const BUY_MAX_KR=30;  // buy price always counts down from 30 kr
+const LOAN_PENALTY=2;
+const MAX_COL=6;
+const CARD_BACK='images/patienter/patienter_45.png';
 
-// 44 patients (patienter_45 = card back, excluded)
+// 44 patients only (45 = card back)
 const ALL_PATIENTS=[
   {id:1, bild:'patienter_1.png', organ:['njurar'],budget:6,pts:2},
   {id:2, bild:'patienter_2.png', organ:['njurar'],budget:6,pts:2},
@@ -582,36 +567,45 @@ const ALL_PATIENTS=[
   {id:44,bild:'patienter_44.png',organ:['hjärta','lungor','lever','njurar'],budget:48,pts:13},
 ];
 
-const MAX_COL=6;
-const CARD_BACK='images/patienter/patienter_45.png'; // used for "cured" flip
-
 let myPlayerId=null,myName='',roomCode='',isHost=false;
 let gameState=null,timerInterval=null;
 let hasActedBuy=false,hasActedSell=false,prevItemKey=null,_prevLW=null;
+// Clock offset: difference between our local clock and Firebase server time
+let clockOffset=0; // ms, positive = our clock is ahead
 
-// ── UTILITIES ────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────
 const rnd=()=>Math.floor(1000+Math.random()*9000).toString();
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
-const statusLabel=s=>s==='dying'?'💀 Döende':s==='sick'?'💔 Sjuk':'♥️ Stabil';
+const statusLabel=s=>s==='dying'?'Döende':s==='sick'?'Sjuk':'Stabil';
 const statusClass=s=>s==='dying'?'dying':s==='sick'?'sick':'stable';
-
-// Patient's current budget: dying = 1.5× base, others = base
 const patientBudget=p=>p.status==='dying'?Math.round(p.budget*1.5*10)/10:p.budget;
-
-const getSpeed=()=>DIFFICULTY_SPEED[gameState?.difficulty||'normal']||DIFFICULTY_SPEED.normal;
+const getSpeed=()=>SPEEDS[gameState?.difficulty||'normal']||SPEEDS.normal;
 const organBg=id=>({hjärta:'var(--heart-bg)',lungor:'var(--lung-bg)',njurar:'var(--kidney-bg)',lever:'var(--liver-bg)'})[id]||'var(--bg3)';
+
+// Synced elapsed: uses timerStart stored in Firebase (ms UTC), corrected for clock offset
+const syncedElapsed=()=>{
+  const start=gameState?.timerStart||Date.now();
+  return (Date.now()-clockOffset-start)/1000;
+};
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('active',el.id===id));}
 function toast(msg,type=''){const t=document.createElement('div');t.className='toast'+(type?' t-'+type:'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3200);}
 function flash(c){const el=document.getElementById('flashOverlay');el.className='flash-overlay flash-'+c;setTimeout(()=>el.className='flash-overlay',600);}
-const elapsed=()=>(Date.now()-(gameState?.timerStart||Date.now()))/1000;
+
+// Organ pill (image only, no text)
+function makeOrganPill(orgId,sizeClass,extraClass){
+  const org=ORGAN_DATA[orgId];if(!org)return null;
+  const d=document.createElement('div');
+  d.className=`${sizeClass} ${orgId}${extraClass?' '+extraClass:''}`;
+  d.innerHTML=`<img src="${org.img}" alt="" onerror="this.style.visibility='hidden'">`;
+  return d;
+}
 
 function genOrgans(n){
   const keys=Object.keys(ORGAN_DATA),w=keys.map(k=>ORGAN_DATA[k].weight),tot=w.reduce((a,b)=>a+b,0),r=[];
   for(let i=0;i<n;i++){let x=Math.random()*tot;for(let j=0;j<keys.length;j++){x-=w[j];if(x<=0){r.push(keys[j]);break;}}if(r.length<=i)r.push('njurar');}
   return r;
 }
-
 function genPatients(nd,ns,nst){
   const d=shuffle(ALL_PATIENTS.filter(p=>p.organ.length>=3)).slice(0,Math.min(nd,MAX_COL)).map(p=>({...p,status:'dying'}));
   const s=shuffle(ALL_PATIENTS.filter(p=>p.organ.length===2)).slice(0,Math.min(ns,MAX_COL)).map(p=>({...p,status:'sick'}));
@@ -619,14 +613,41 @@ function genPatients(nd,ns,nst){
   return [...d,...s,...st];
 }
 
-// ── LOBBY ────────────────────────────────────────────────
+// ── CLOCK SYNC ────────────────────────────────────────────
+// Read Firebase server time once to calibrate our offset
+async function calibrateClock(){
+  const offsetRef=ref(db,'.info/serverTimeOffset');
+  return new Promise(resolve=>{
+    onValue(offsetRef,snap=>{
+      clockOffset=snap.val()||0; // Firebase gives offset: serverTime = Date.now() + offset... actually it's the opposite
+      // Firebase serverTimeOffset = server time - client time
+      // So: serverTime = Date.now() + serverTimeOffset
+      // We store timerStart as server time via serverTimestamp
+      // elapsed = (serverNow - timerStart) = (Date.now() + offset) - timerStart
+      // So clockOffset here represents what to ADD to local Date.now() to get server time
+      resolve();
+    },{onlyOnce:true});
+  });
+}
+await calibrateClock();
+
+// serverNow() returns current server time estimate in ms
+const serverNow=()=>Date.now()+clockOffset;
+const serverElapsed=()=>{
+  const start=gameState?.timerStart||serverNow();
+  return (serverNow()-start)/1000;
+};
+
+// ── LOBBY ─────────────────────────────────────────────────
 window.createGame=async function(){
   const name=document.getElementById('playerName').value.trim();
   if(!name){document.getElementById('lobbyError').textContent='Ange ett namn.';return;}
   myName=name;myPlayerId='p_'+Date.now();isHost=true;roomCode=rnd();
   const diff=document.getElementById('difficultySelect').value||'normal';
-  await set(ref(db,`rooms/${roomCode}`),{host:myPlayerId,status:'waiting',difficulty:diff,
-    players:{[myPlayerId]:{name,money:STARTKAPITAL,pts:0,loans:0,inventory:{}}}});
+  await set(ref(db,`rooms/${roomCode}`),{
+    host:myPlayerId,status:'waiting',difficulty:diff,
+    players:{[myPlayerId]:{name,money:STARTKAPITAL,pts:0,loans:0,inventory:{},cured:0}}
+  });
   listenToRoom();
   document.getElementById('displayCode').textContent=roomCode;
   document.getElementById('diffRow').style.display='';
@@ -644,7 +665,7 @@ window.joinGame=async function(){
   if(!snap.exists()){document.getElementById('lobbyError').textContent='Rum hittades inte.';return;}
   const room=snap.val();
   if(room.status!=='waiting'){document.getElementById('lobbyError').textContent='Spelet har redan startat.';return;}
-  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{name,money:STARTKAPITAL,pts:0,loans:0,inventory:{}});
+  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{name,money:STARTKAPITAL,pts:0,loans:0,inventory:{},cured:0});
   listenToRoom();
   document.getElementById('displayCode').textContent=roomCode;
   document.getElementById('diffRow').style.display='none';
@@ -652,17 +673,17 @@ window.joinGame=async function(){
   showScreen('screen-waiting');
 };
 
-// ── ROOM LISTENER ────────────────────────────────────────
+// ── ROOM LISTENER ─────────────────────────────────────────
 function listenToRoom(){
   onValue(ref(db,`rooms/${roomCode}`),snap=>{
     if(!snap.exists()) return;
     gameState=snap.val();
     const s=gameState.status;
-    if(s==='waiting')renderWaiting();
+    if(s==='waiting')      renderWaiting();
     else if(s==='overview'){showScreen('screen-overview');renderOverview();}
-    else if(s==='playing'){showScreen('screen-game');renderGame();}
-    else if(s==='scores')showScores(false);
-    else if(s==='final')showScores(true);
+    else if(s==='playing') {showScreen('screen-game');renderGame();}
+    else if(s==='between') showBetween();
+    else if(s==='final')   showFinalScores();
   });
 }
 
@@ -682,6 +703,7 @@ window.hostStartGame=async function(){
   const diff=document.getElementById('difficultySelect').value||'normal';
   const numP=Object.keys(gameState.players||{}).length;
   const pc=PLAYER_COUNTS[numP]||PLAYER_COUNTS[6];
+  const spd=SPEEDS[diff]||SPEEDS.normal;
   const organs=genOrgans(pc.organPerRunda);
   const patients=genPatients(pc.dying,pc.sick,pc.stable);
   const pu={};
@@ -690,13 +712,14 @@ window.hostStartGame=async function(){
     pu[`players/${pid}/inventory`]={};
     pu[`players/${pid}/pts`]=0;
     pu[`players/${pid}/loans`]=0;
+    pu[`players/${pid}/cured`]=0;
   });
-  const sp=DIFFICULTY_SPEED[diff]||DIFFICULTY_SPEED.normal;
+  // timerStart stored as real ms UTC — host uses serverNow()
   await update(ref(db,`rooms/${roomCode}`),{
     status:'overview',difficulty:diff,totalRounds:pc.rundor,currentRound:1,
     phase:'buy',organQueue:organs,patientQueue:patients,
     currentOrganIndex:0,currentSellIndex:0,
-    timerStart:Date.now(),timerDuration:sp.buySpeed,
+    timerStart:serverNow(),timerDuration:spd.buy,
     lastWinner:null,phaseMsg:'Granska utbud och efterfrågan!',ready:{},
     donatedOrgans:[],
     ...pu,
@@ -714,15 +737,14 @@ function renderOverview(){
   (gs.organQueue||[]).forEach(orgId=>{
     const org=ORGAN_DATA[orgId];
     const d=document.createElement('div');d.className='ov-organ-thumb';d.style.background=organBg(orgId);
-    d.innerHTML=`<img src="${org.img}" alt="" onerror="this.outerHTML='<div style=\\"font-size:1.3rem;\\">${org.emoji}</div>'">`;
+    d.innerHTML=`<img src="${org.img}" alt="" onerror="this.style.visibility='hidden'">`;
     ol.appendChild(d);
   });
 
   const patients=gs.patientQueue||[];
-  const myInv=Object.keys(me?.inventory||{});
-  fillOvCol('ovColDying',  patients.filter(p=>p.status==='dying'), myInv);
-  fillOvCol('ovColSick',   patients.filter(p=>p.status==='sick'),  myInv);
-  fillOvCol('ovColStable', patients.filter(p=>p.status==='stable'),myInv);
+  fillOvCol('ovColDying',  patients.filter(p=>p.status==='dying'&&!p.dead&&!p.sold));
+  fillOvCol('ovColSick',   patients.filter(p=>p.status==='sick' &&!p.dead&&!p.sold));
+  fillOvCol('ovColStable', patients.filter(p=>p.status==='stable'&&!p.dead&&!p.sold));
 
   const rm=gs.ready||{},pl=gs.players||{};
   const rc=document.getElementById('ovReadyChips');rc.innerHTML='';
@@ -739,12 +761,17 @@ function renderOverview(){
 
   const allDone=Object.keys(pl).length>0&&Object.keys(pl).every(pid=>!!rm[pid]);
   if(allDone&&isHost){
-    const sp=getSpeed();
-    update(ref(db,`rooms/${roomCode}`),{status:'playing',timerStart:Date.now(),timerDuration:sp.buySpeed,phaseMsg:'KÖPFAS — Första som klickar köper organet!'});
+    const spd=getSpeed();
+    update(ref(db,`rooms/${roomCode}`),{
+      status:'playing',
+      timerStart:serverNow(),
+      timerDuration:spd.buy,
+      phaseMsg:'KÖPFAS — Första som klickar köper organet!'
+    });
   }
 }
 
-function fillOvCol(elId,patients,myInv){
+function fillOvCol(elId,patients){
   const el=document.getElementById(elId);el.innerHTML='';
   const vis=patients.slice(0,MAX_COL);
   if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.2rem;grid-column:1/-1;">–</div>';return;}
@@ -760,7 +787,7 @@ window.clickReady=async function(){
   await update(ref(db,`rooms/${roomCode}/ready`),{[myPlayerId]:true});
 };
 
-// ── RENDER GAME ──────────────────────────────────────────
+// ── RENDER GAME ───────────────────────────────────────────
 function renderGame(){
   if(!gameState) return;
   const gs=gameState,me=(gs.players||{})[myPlayerId];if(!me) return;
@@ -781,19 +808,15 @@ function renderGame(){
 
   document.getElementById('statusBanner').textContent=gs.phaseMsg||'';
 
-  const buyArea=document.getElementById('buyArea');
-  const sellTop=document.getElementById('sellTop');
-  const sellActiveLbl=document.getElementById('sellActiveLbl');
-
   if(gs.phase==='buy'){
-    buyArea.style.display='flex';
-    sellTop.classList.remove('vis');
-    sellActiveLbl.classList.add('hidden');
+    document.getElementById('buyArea').style.display='flex';
+    document.getElementById('sellTop').classList.remove('vis');
+    document.getElementById('sellActiveLbl').classList.add('hidden');
     renderBuyPhase();
   } else {
-    buyArea.style.display='none';
-    sellTop.classList.add('vis');
-    sellActiveLbl.classList.remove('hidden');
+    document.getElementById('buyArea').style.display='none';
+    document.getElementById('sellTop').classList.add('vis');
+    document.getElementById('sellActiveLbl').classList.remove('hidden');
     renderSellPhase();
   }
   renderOrganQueue();
@@ -801,16 +824,13 @@ function renderGame(){
   startTimer();
 }
 
-// ── BUY PHASE ────────────────────────────────────────────
+// ── BUY PHASE ─────────────────────────────────────────────
 function renderBuyPhase(){
   const gs=gameState,organs=gs.organQueue||[],idx=gs.currentOrganIndex||0;
   if(idx>=organs.length) return;
-  const orgId=organs[idx],org=ORGAN_DATA[orgId];
-  const bg=document.getElementById('buyOrganBg');
-  bg.className='organ-bg '+orgId;
-  document.getElementById('buyOrganImg').src=org.img;
-  document.getElementById('buyOrganImg').alt=org.name;
-
+  const orgId=organs[idx];
+  document.getElementById('buyOrganBg').className='buy-organ-bg '+orgId;
+  document.getElementById('buyOrganImg').src=ORGAN_DATA[orgId]?.img||'';
   const btn=document.getElementById('buyBtn');
   const me=(gs.players||{})[myPlayerId];
   if(hasActedBuy||gs.lastWinner){
@@ -819,86 +839,83 @@ function renderBuyPhase(){
       const w=(gs.players||{})[gs.lastWinner];
       document.getElementById('statusBanner').textContent=gs.lastWinner===myPlayerId?'✓ Du köpte organet!':`${w?.name||'?'} köpte organet`;
     }
-  } else if(!me||me.money<0.1){btn.disabled=true;}
+  } else if(!me||me.money<0.5){btn.disabled=true;document.getElementById('statusBanner').textContent='Inte råd!';}
   else{btn.disabled=false;}
 }
 
 // ── SELL PHASE ────────────────────────────────────────────
 function renderSellPhase(){
   const gs=gameState,patients=gs.patientQueue||[],idx=gs.currentSellIndex||0;
-  if(idx>=patients.length) return;
-  const p=patients[idx];
+  const active=getActiveSellPatients(patients);
+  if(idx>=active.length) return;
+  const p=active[idx];
   const me=(gs.players||{})[myPlayerId];
   const myInv=Object.keys(me?.inventory||{});
   const canSell=p.organ.every(o=>myInv.includes(o));
   const budget=patientBudget(p);
+  const spd=getSpeed();
 
-  // Big patient image
+  // Big patient
   document.getElementById('sellPatientImg').src=`images/patienter/${p.bild}`;
-  const pStatus=document.getElementById('sellPatientStatus');
-  pStatus.textContent=statusLabel(p.status);
-  pStatus.className='sell-patient-status '+statusClass(p.status);
+  const psb=document.getElementById('sellPatientStatusBar');
+  psb.textContent=statusLabel(p.status);
+  psb.className='sell-patient-status-bar '+statusClass(p.status);
 
-  // Inventory
-  const invItems=document.getElementById('sellInvItems');invItems.innerHTML='';
+  // Inventory pills (image only)
+  const invPills=document.getElementById('sellInvPills');invPills.innerHTML='';
   const invKeys=Object.keys(me?.inventory||{});
-  if(!invKeys.length){invItems.innerHTML='<span class="inv-empty-txt">Inget i lager</span>';}
+  if(!invKeys.length){invPills.innerHTML='<span style="font-size:.6rem;color:var(--muted);">–</span>';}
   else{
     invKeys.forEach(orgId=>{
-      const org=ORGAN_DATA[orgId];
-      const needed=p.organ.includes(orgId);
-      const s=document.createElement('span');s.className='inv-item '+(needed?'needed':'neutral');
-      s.style.background=organBg(orgId);
-      s.innerHTML=`<img src="${org.img}" alt="" onerror="this.outerHTML='${org.emoji}'">${org.name}`;
-      invItems.appendChild(s);
+      const isNeeded=p.organ.includes(orgId);
+      const pill=makeOrganPill(orgId,'org-pill-lg',isNeeded?'inv-own':'');
+      if(pill) invPills.appendChild(pill);
     });
   }
 
-  // Needed organs
-  const sn=document.getElementById('sellNeeded');sn.innerHTML='';
+  // Needed pills
+  const snPills=document.getElementById('sellNeededPills');snPills.innerHTML='';
   p.organ.forEach(o=>{
     const have=myInv.includes(o);
-    const sp=document.createElement('span');sp.className='sn-org '+(have?'have':'need');
-    sp.textContent=(ORGAN_DATA[o]?.emoji||'?')+' '+(ORGAN_DATA[o]?.name||o);
-    sn.appendChild(sp);
+    const pill=makeOrganPill(o,'org-pill-lg',have?'have':'need');
+    if(pill) snPills.appendChild(pill);
   });
 
-  // Check if only ONE player has all needed organs (across all players)
+  // Seller count check
   const allPlayers=Object.values(gs.players||{});
   const sellersCount=allPlayers.filter(pl=>p.organ.every(o=>Object.keys(pl.inventory||{}).includes(o))).length;
   const noOneCan=sellersCount===0;
   const onlyOneCan=sellersCount===1;
 
-  // Show/hide timer vs maxprice
-  const timerBlock=document.getElementById('sellTimerBlock');
-  const maxPriceBlock=document.getElementById('sellMaxPrice');
+  const priceBlock=document.getElementById('sellPriceBlock');
+  const priceLbl=document.getElementById('sellPriceLbl');
+  const priceVal=document.getElementById('sellPriceVal');
   const sellBtn=document.getElementById('sellBtn');
 
   if(noOneCan){
-    // Auto-skip — handled by host
-    timerBlock.style.display='none';
-    maxPriceBlock.classList.remove('vis');
+    priceBlock.style.display='none';
     sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
-    document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — patienten hoppas automatiskt';
-    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>degradeOrSkipPatient(patients,idx,gs),1800);}
+    document.getElementById('stFill').style.width='0%';
+    document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — hoppar automatiskt';
+    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,idx),1800);}
   } else if(onlyOneCan){
-    // Fixed max price, no timer
-    timerBlock.style.display='none';
-    maxPriceBlock.classList.add('vis');
-    document.getElementById('sellMaxPriceVal').textContent=budget.toFixed(1)+' KR';
+    priceBlock.style.display='block';
+    priceLbl.textContent='MAXPRIS (du är enda säljaren)';
+    priceVal.textContent=budget.toFixed(1)+' KR';
+    document.getElementById('stFill').style.width='100%';
     document.getElementById('sellBtnPrice').textContent=budget.toFixed(1);
     if(canSell){
-      sellBtn.disabled=hasActedSell||!!gs.lastWinner;sellBtn.style.background='var(--green)';
-      if(!gs.lastWinner&&!hasActedSell) document.getElementById('statusBanner').textContent='Du är enda säljaren — klicka för att sälja till maxpris!';
+      sellBtn.disabled=hasActedSell||!!gs.lastWinner;
+      sellBtn.style.background=(hasActedSell||gs.lastWinner)?'var(--muted)':'var(--green)';
+      if(!gs.lastWinner&&!hasActedSell) document.getElementById('statusBanner').textContent='Du är enda säljaren — klicka för maxpris!';
     } else {
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
-      document.getElementById('statusBanner').textContent='Annan spelare är enda säljaren — inväntar deras val';
+      document.getElementById('statusBanner').textContent='Annan spelare kan sälja — inväntar...';
     }
-    if(gs.lastWinner){sellBtn.disabled=true;}
+    if(gs.lastWinner) sellBtn.disabled=true;
   } else {
-    // Normal timer
-    timerBlock.style.display='block';
-    maxPriceBlock.classList.remove('vis');
+    priceBlock.style.display='block';
+    priceLbl.textContent='BASPRIS';
     if(canSell&&!hasActedSell&&!gs.lastWinner){
       sellBtn.disabled=false;sellBtn.style.background='var(--green)';
       document.getElementById('statusBanner').textContent='✓ Klicka när priset är rätt!';
@@ -906,7 +923,7 @@ function renderSellPhase(){
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
       document.getElementById('statusBanner').textContent='Du saknar organ för denna patient';
     }
-    if(hasActedSell||gs.lastWinner) sellBtn.disabled=true;
+    if(hasActedSell||gs.lastWinner){sellBtn.disabled=true;sellBtn.style.background='var(--muted)';}
     if(gs.lastWinner&&gs.lastWinner!=='NONE'){
       const w=(gs.players||{})[gs.lastWinner];
       document.getElementById('statusBanner').textContent=gs.lastWinner===myPlayerId?'✓ Du sålde!':`${w?.name||'?'} sålde`;
@@ -914,7 +931,13 @@ function renderSellPhase(){
   }
 }
 
-// ── ORGAN QUEUE ──────────────────────────────────────────
+// Active = not dead, not sold
+function getActiveSellPatients(patients){
+  const all=[...patients.filter(p=>p.status==='dying'),...patients.filter(p=>p.status==='sick'),...patients.filter(p=>p.status==='stable')];
+  return all.filter(p=>!p.dead&&!p.sold);
+}
+
+// ── ORGAN QUEUE ───────────────────────────────────────────
 function renderOrganQueue(){
   const gs=gameState,organs=gs.organQueue||[];
   const start=(gs.currentOrganIndex||0)+(gs.phase==='buy'?1:0);
@@ -924,31 +947,29 @@ function renderOrganQueue(){
   upcoming.forEach(orgId=>{
     const org=ORGAN_DATA[orgId];
     const d=document.createElement('div');d.className=`oq-card ${orgId}`;
-    d.innerHTML=`<img src="${org.img}" alt="" onerror="this.outerHTML='<div style=\\"font-size:1.5rem;text-align:center;padding:.35rem;\\">${org.emoji}</div>'">`;
+    d.innerHTML=`<img src="${org.img}" alt="" onerror="this.style.visibility='hidden'">`;
     el.appendChild(d);
   });
-  if(!upcoming.length) el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.35rem;grid-column:1/-1;">Inga fler organ</div>';
+  if(!upcoming.length) el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.35rem;grid-column:1/-1;">–</div>';
 }
 
-// ── PATIENT COLUMNS (queue, minus current sell patient) ──
+// ── PATIENT COLUMNS ───────────────────────────────────────
 function renderPatientCols(){
   const gs=gameState,patients=gs.patientQueue||[];
   const me=(gs.players||{})[myPlayerId];
   const myInv=Object.keys(me?.inventory||{});
+  const active=getActiveSellPatients(patients);
   const curIdx=gs.currentSellIndex||0;
+  const currentPatient=gs.phase==='sell'&&curIdx<active.length?active[curIdx]:null;
 
-  document.getElementById('patientQCount').textContent=patients.length+' st';
+  document.getElementById('patientQCount').textContent=patients.filter(p=>!p.dead&&!p.sold).length+' st';
 
   function fillCol(elId,group){
     const el=document.getElementById(elId);el.innerHTML='';
-    const vis=group.slice(0,MAX_COL);
+    const vis=group.filter(p=>!p.dead&&!p.sold).slice(0,MAX_COL);
     if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.18rem;grid-column:1/-1;">–</div>';return;}
     vis.forEach(p=>{
-      // Find global index in ordered list
-      const ordered=[...patients.filter(x=>x.status==='dying'),...patients.filter(x=>x.status==='sick'),...patients.filter(x=>x.status==='stable')];
-      const gi=ordered.findIndex(x=>x.id===p.id&&x.status===p.status);
-      const isCurrent=gs.phase==='sell'&&gi===curIdx;
-      if(isCurrent) return; // hide from queue — shown large in sell-top
+      if(currentPatient&&p.id===currentPatient.id&&p.status===currentPatient.status) return; // shown large
       const canSell=p.organ.every(o=>myInv.includes(o));
       const card=document.createElement('div');
       card.className='pcard'+(canSell&&gs.phase==='sell'?' can-sell':'');
@@ -963,57 +984,62 @@ function renderPatientCols(){
   fillCol('pcolStable', patients.filter(p=>p.status==='stable'));
 }
 
-// ── TIMER ─────────────────────────────────────────────────
+// ── TIMER (uses serverElapsed for sync) ───────────────────
 function startTimer(){
   if(timerInterval)clearInterval(timerInterval);
   if(!gameState) return;
   timerInterval=setInterval(()=>{
     if(!gameState) return;
     const gs=gameState,spd=getSpeed();
+    const e=serverElapsed();
+
     if(gs.phase==='buy'){
-      const e=elapsed(),max=gs.timerDuration||spd.buySpeed;
-      // Price: linear from BUY_MAX_KR down to 0 over 'max' seconds
-      const raw=Math.max(0,BUY_MAX_KR*(1-(e/max)));
-      const pct=(raw/BUY_MAX_KR)*100;
+      const max=gs.timerDuration||spd.buy;
+      // Price: 30 → 0 over 'max' seconds
+      const raw=Math.max(0,BUY_MAX*(1-(e/max)));
+      const pct=(raw/BUY_MAX)*100;
       const d=document.getElementById('priceDisplay');
       const f=document.getElementById('priceBarFill');
       const txt=raw.toFixed(1);
       if(txt!==d.dataset.l){d.dataset.l=txt;d.textContent=txt;d.classList.remove('tick');void d.offsetWidth;d.classList.add('tick');}
-      d.className='price-val '+(raw>BUY_MAX_KR*.65?'high':raw>BUY_MAX_KR*.3?'mid':'low');
-      f.style.width=pct+'%';f.style.background=raw>BUY_MAX_KR*.65?'var(--green2)':raw>BUY_MAX_KR*.3?'var(--orange2)':'var(--red2)';
+      d.className='price-val '+(raw>BUY_MAX*.65?'high':raw>BUY_MAX*.3?'mid':'low');
+      f.style.width=pct+'%';f.style.background=raw>BUY_MAX*.65?'var(--green2)':raw>BUY_MAX*.3?'var(--orange2)':'var(--red2)';
       document.getElementById('buyBtnPrice').textContent=txt;
       if(e>=max&&isHost&&!hasActedBuy){clearInterval(timerInterval);organExpired();}
+
     } else {
-      // Sell: check if noOneCan handled already; if timer mode
-      const patients=gs.patientQueue||[],idx=gs.currentSellIndex||0;
-      if(idx>=patients.length) return;
-      const p=patients[idx];
+      // sell timer
+      const patients=gs.patientQueue||[];
+      const active=getActiveSellPatients(patients);
+      const idx=gs.currentSellIndex||0;
+      if(idx>=active.length) return;
+      const p=active[idx];
       const allPlayers=Object.values(gs.players||{});
       const sellersCount=allPlayers.filter(pl=>p.organ.every(o=>Object.keys(pl.inventory||{}).includes(o))).length;
-      if(sellersCount===0||sellersCount===1) return; // handled in renderSellPhase
+      if(sellersCount===0||sellersCount===1) return; // handled elsewhere
 
-      const e=elapsed(),max=gs.timerDuration||spd.sellSpeed;
+      const max=gs.timerDuration||spd.sell;
       const budget=patientBudget(p);
       const raw=Math.min(budget,budget*(e/max));
-      const pct=(e/max)*100;
-      const sv=document.getElementById('sellTimerVal');
+      const pct=Math.min(100,(e/max)*100);
+      const sv=document.getElementById('sellPriceVal');
       const f=document.getElementById('stFill');
       const txt=raw.toFixed(1);
       if(txt!==sv.dataset.l){sv.dataset.l=txt;sv.textContent=txt+' KR';}
-      f.style.width=Math.min(100,pct)+'%';f.style.background=pct<35?'var(--green2)':pct<70?'var(--orange2)':'var(--red2)';
+      f.style.width=pct+'%';f.style.background=pct<35?'var(--green2)':pct<70?'var(--orange2)':'var(--red2)';
       document.getElementById('sellBtnPrice').textContent=txt;
       if(e>=max&&isHost&&!hasActedSell){clearInterval(timerInterval);patientTimerExpired();}
     }
   },80);
 }
 
-// ── ACTIONS ──────────────────────────────────────────────
+// ── BUY ACTION ────────────────────────────────────────────
 window.handleBuy=async function(){
   if(hasActedBuy) return;
   const gs=gameState;if(!gs||gs.lastWinner) return;
   hasActedBuy=true;document.getElementById('buyBtn').disabled=true;
-  const e=elapsed(),spd=getSpeed(),max=gs.timerDuration||spd.buySpeed;
-  const price=Math.max(0,BUY_MAX_KR*(1-(e/max)));
+  const e=serverElapsed(),max=gs.timerDuration||getSpeed().buy;
+  const price=parseFloat(Math.max(0,BUY_MAX*(1-(e/max))).toFixed(2));
   const me=(gs.players||{})[myPlayerId];
   const organId=(gs.organQueue||[])[gs.currentOrganIndex||0];if(!organId) return;
   const newMoney=parseFloat((me.money-price).toFixed(2));
@@ -1024,15 +1050,18 @@ window.handleBuy=async function(){
   if(isHost) setTimeout(advanceBuy,2000);
 };
 
+// ── SELL ACTION ───────────────────────────────────────────
 window.handleSell=async function(){
   if(hasActedSell) return;
   const gs=gameState;if(!gs||gs.lastWinner) return;
   hasActedSell=true;document.getElementById('sellBtn').disabled=true;
-  const patients=gs.patientQueue||[],idx=gs.currentSellIndex||0;
-  const p=patients[idx];if(!p) return;
+  const patients=gs.patientQueue||[];
+  const active=getActiveSellPatients(patients);
+  const idx=gs.currentSellIndex||0;
+  const p=active[idx];if(!p) return;
   const me=(gs.players||{})[myPlayerId];
   const myInv=Object.keys(me?.inventory||{});
-  if(!p.organ.every(o=>myInv.includes(o))){toast('Du saknar organ!','err');hasActedSell=false;return;}
+  if(!p.organ.every(o=>myInv.includes(o))){toast('Du saknar organ!','err');hasActedSell=false;document.getElementById('sellBtn').disabled=false;return;}
 
   const budget=patientBudget(p);
   const allPlayers=Object.values(gs.players||{});
@@ -1040,110 +1069,117 @@ window.handleSell=async function(){
 
   let paid;
   if(sellersCount===1){
-    paid=budget; // only seller: always gets full budget
+    paid=budget;
   } else {
-    const e=elapsed(),spd=getSpeed(),max=gs.timerDuration||spd.sellSpeed;
+    const e=serverElapsed(),max=gs.timerDuration||getSpeed().sell;
     paid=parseFloat(Math.min(budget,budget*(e/max)).toFixed(2));
   }
 
   const newInv={...(me.inventory||{})};p.organ.forEach(o=>delete newInv[o]);
   const newMoney=parseFloat((me.money+paid).toFixed(2));
   const newPts=(me.pts||0)+p.pts;
+  const newCured=(me.cured||0)+1;
 
-  // Mark patient as cured (removed from queue)
-  const updQ=[...patients];updQ[idx]={...p,sold:true};
+  // Mark patient as sold in the FULL patientQueue array (find by id+status)
+  const updQ=patients.map(x=>x.id===p.id&&x.status===p.status?{...x,sold:true}:x);
 
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,patientQueue:updQ,phaseMsg:`${myName} sålde för ${paid.toFixed(1)} kr (+${p.pts}p)`});
-  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,pts:newPts,inventory:newInv});
+  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,pts:newPts,inventory:newInv,cured:newCured});
   flash('teal');toast(`Sålde för ${paid.toFixed(1)} kr! +${p.pts}p`,'ok');
   if(isHost) setTimeout(advanceSell,2000);
 };
 
-// ── DEGRADATION LOGIC ─────────────────────────────────────
-// Called by host when patient timer expires (nobody sold)
+// ── DEGRADATION ───────────────────────────────────────────
 async function patientTimerExpired(){
   if(!isHost) return;
-  const gs=gameState,patients=gs.patientQueue||[],idx=gs.currentSellIndex||0;
-  if(idx>=patients.length) return;
+  const gs=gameState,patients=gs.patientQueue||[];
+  const active=getActiveSellPatients(patients);
+  const idx=gs.currentSellIndex||0;
+  if(idx>=active.length) return;
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:'NONE',phaseMsg:'Ingen sålde — patienten försämras!'});
-  setTimeout(()=>degradeOrSkipPatient(patients,idx,gs),1500);
+  setTimeout(()=>doDegrade(patients,active[idx]),1500);
 }
 
-// Degrade patient: stable→sick, sick→dying, dying→dead (removes from queue, donates organs)
-async function degradeOrSkipPatient(patients,idx,gs){
+async function doDegrade(patients,p){
   if(!isHost) return;
-  const p=patients[idx];
-  const updQ=[...patients];
-  let donatedOrgans=[...(gs.donatedOrgans||[])];
-
-  if(p.status==='stable'){
-    updQ[idx]={...p,status:'sick'};
-    flash('red');toast(`${p.bild.replace('.png','').replace('patienter_','')} försämras till Sjuk`,'warn');
-  } else if(p.status==='sick'){
-    updQ[idx]={...p,status:'dying'};
-    flash('red');toast(`Patient försämras till Döende`,'warn');
-  } else {
-    // dying → dead: remove, donate healthy organs
-    const donatable=Object.keys(ORGAN_DATA).filter(o=>!p.organ.includes(o));
-    // randomly donate 1-2 healthy organs
+  const updQ=patients.map(x=>{
+    if(x.id!==p.id||x.status!==p.status) return x;
+    if(x.status==='stable') return {...x,status:'sick'};
+    if(x.status==='sick')   return {...x,status:'dying'};
+    // dying → dead: donate healthy organs
+    const donatable=Object.keys(ORGAN_DATA).filter(o=>!x.organ.includes(o));
     const toGive=shuffle(donatable).slice(0,Math.floor(Math.random()*2)+1);
-    donatedOrgans=[...donatedOrgans,...toGive];
-    updQ[idx]={...p,dead:true};
-    flash('red');toast(`Patient dog — donerar ${toGive.map(o=>ORGAN_DATA[o]?.name).join(', ')} till nästa runda`,'warn');
-  }
-
-  await update(ref(db,`rooms/${roomCode}`),{patientQueue:updQ,donatedOrgans,lastWinner:null});
-  // Small pause then move on
-  setTimeout(()=>advanceSell(true),1200);
+    // we'll add donated organs to next round queue
+    const curDonated=gameState?.donatedOrgans||[];
+    update(ref(db,`rooms/${roomCode}`),{donatedOrgans:[...curDonated,...toGive]});
+    if(toGive.length) toast(`Patient dog — donerar ${toGive.map(o=>ORGAN_DATA[o]?.name).join(', ')} till kön`,'warn');
+    return {...x,dead:true};
+  });
+  flash('red');
+  if(p.status==='dying') toast('Patient dog 💀','warn');
+  else toast(`Patient försämras till ${p.status==='stable'?'Sjuk':'Döende'}`,'warn');
+  await update(ref(db,`rooms/${roomCode}`),{patientQueue:updQ,lastWinner:null});
+  setTimeout(advanceSell,1200);
 }
 
-// ── ADVANCE ──────────────────────────────────────────────
+// ── ADVANCE ───────────────────────────────────────────────
 async function advanceBuy(){
   if(!isHost) return;
   const gs=gameState,spd=getSpeed();
   const nextIdx=(gs.currentOrganIndex||0)+1;
   if(nextIdx>=(gs.organQueue||[]).length){
-    // switch to sell phase — sort patients: dying first
     const patients=(gs.patientQueue||[]).filter(p=>!p.dead);
     const ordered=[...patients.filter(p=>p.status==='dying'),...patients.filter(p=>p.status==='sick'),...patients.filter(p=>p.status==='stable')];
-    await update(ref(db,`rooms/${roomCode}`),{phase:'sell',currentSellIndex:0,patientQueue:ordered,timerStart:Date.now(),timerDuration:spd.sellSpeed,lastWinner:null,phaseMsg:'SÄLJFAS — Klicka när priset är rätt!'});
+    await update(ref(db,`rooms/${roomCode}`),{
+      phase:'sell',currentSellIndex:0,patientQueue:ordered,
+      timerStart:serverNow(),timerDuration:spd.sell,
+      lastWinner:null,phaseMsg:'SÄLJFAS — Klicka när priset är rätt!'
+    });
   } else {
-    await update(ref(db,`rooms/${roomCode}`),{currentOrganIndex:nextIdx,timerStart:Date.now(),timerDuration:spd.buySpeed,lastWinner:null,phaseMsg:'KÖPFAS — Nästa organ!'});
+    await update(ref(db,`rooms/${roomCode}`),{
+      currentOrganIndex:nextIdx,
+      timerStart:serverNow(),timerDuration:spd.buy,
+      lastWinner:null,phaseMsg:'KÖPFAS — Nästa organ!'
+    });
   }
 }
 
-async function advanceSell(fromDegrade=false){
+async function advanceSell(){
   if(!isHost) return;
   const gs=gameState,spd=getSpeed();
-  const patients=(gs.patientQueue||[]);
-  let nextIdx=(gs.currentSellIndex||0)+1;
-  // skip sold/dead
-  while(nextIdx<patients.length&&(patients[nextIdx]?.sold||patients[nextIdx]?.dead)) nextIdx++;
+  const patients=gs.patientQueue||[];
+  const active=getActiveSellPatients(patients);
+  const nextIdx=(gs.currentSellIndex||0)+1;
 
-  if(nextIdx>=patients.length){
+  if(nextIdx>=active.length){
+    // End of round
     const curr=gs.currentRound||1,total=gs.totalRounds||3;
-    await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'scores'});
+    await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'between'});
   } else {
-    await update(ref(db,`rooms/${roomCode}`),{currentSellIndex:nextIdx,timerStart:Date.now(),timerDuration:spd.sellSpeed,lastWinner:null,phaseMsg:'SÄLJFAS — Nästa patient!'});
+    await update(ref(db,`rooms/${roomCode}`),{
+      currentSellIndex:nextIdx,
+      timerStart:serverNow(),timerDuration:spd.sell,
+      lastWinner:null,phaseMsg:'SÄLJFAS — Nästa patient!'
+    });
   }
 }
 
 async function organExpired(){
   if(!isHost) return;
-  flash('red');toast('Organet försvann — ingen köpte i tid','err');
+  flash('red');toast('Organet försvann — ingen köpte','err');
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:'NONE',phaseMsg:'Organet försvann!'});
   setTimeout(advanceBuy,1500);
 }
 
-// Watch other players → host advances
+// Watch other-player advances
 setInterval(()=>{
   if(!gameState||!isHost) return;
   const lw=gameState.lastWinner;
   if(lw&&lw!==_prevLW){_prevLW=lw;
     if(lw!==myPlayerId&&lw!=='NONE'){
       const gs=gameState;
-      if(gs.phase==='buy')setTimeout(advanceBuy,2000);
-      else if(gs.phase==='sell')setTimeout(advanceSell,2000);
+      if(gs.phase==='buy') setTimeout(advanceBuy,2000);
+      else if(gs.phase==='sell') setTimeout(advanceSell,2000);
     }
   }
 },300);
@@ -1157,25 +1193,41 @@ window.takeLoan=async function(){
   toast(`+${LOAN_AMOUNT} kr (lån ${(me.loans||0)+1}/3)`);
 };
 
-// ── SCORES ────────────────────────────────────────────────
-function showScores(isFinal){
-  showScreen('screen-scores');
+// ── BETWEEN ROUNDS ────────────────────────────────────────
+function showBetween(){
   if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
-  const players=gameState?.players||{};
-  document.getElementById('scoresTitle').textContent=isFinal?'SLUTRESULTAT':`RUNDA ${gameState.currentRound} SLUT`;
-  const sorted=Object.values(players).map(p=>({...p,finalPts:(p.pts||0)-(p.loans||0)*LOAN_PENALTY})).sort((a,b)=>isFinal?b.finalPts-a.finalPts:b.money-a.money);
-  const table=document.getElementById('scoreTable');table.innerHTML='';
-  sorted.forEach((p,i)=>{
-    const row=document.createElement('div');row.className='score-row';
-    row.innerHTML=`<div class="score-rank ${i===0?'first':''}">${i===0?'🏆':i+1}</div>
-      <div class="score-name">${p.name}</div>
-      <div class="score-money">${p.money.toFixed(1)} KR</div>
-      <div class="score-pts">${isFinal?p.finalPts:p.pts||0} pts</div>`;
-    table.appendChild(row);
+  showScreen('screen-between');
+  const gs=gameState,players=gs.players||{};
+  document.getElementById('betweenRound').textContent=gs.currentRound||1;
+
+  const container=document.getElementById('betweenPlayers');container.innerHTML='';
+  Object.entries(players).forEach(([pid,p])=>{
+    const row=document.createElement('div');row.className='bp-row';
+    const inv=Object.keys(p.inventory||{});
+    const cured=p.cured||0;
+
+    // Organ pills
+    let invHTML='<div class="bp-inv">';
+    if(!inv.length) invHTML+='<span style="font-size:.62rem;color:var(--muted);">Tomt lager</span>';
+    else inv.forEach(orgId=>{
+      const org=ORGAN_DATA[orgId];
+      invHTML+=`<div class="org-pill ${orgId}"><img src="${org?.img||''}" alt="" onerror="this.style.visibility='hidden'"></div>`;
+    });
+    invHTML+='</div>';
+
+    // Cured patients (card back × count)
+    let curedHTML='<div class="bp-cured">';
+    for(let i=0;i<cured;i++) curedHTML+=`<img class="cured-thumb" src="${CARD_BACK}" alt="✓">`;
+    if(!cured) curedHTML+='<span style="font-size:.62rem;color:var(--muted);">Inga botade</span>';
+    curedHTML+='</div>';
+
+    row.innerHTML=`<div class="bp-name">${p.name}</div>${invHTML}${curedHTML}
+      <div class="bp-meta">${p.money.toFixed(1)} kr i kassan · ${p.loans||0} lån</div>`;
+    container.appendChild(row);
   });
-  document.getElementById('nextRoundBtn').classList.toggle('hidden',!((!isFinal)&&isHost));
-  document.getElementById('finalLobbyBtn').classList.toggle('hidden',!isFinal);
-  document.getElementById('waitHostMsg').classList.toggle('hidden',!(!isFinal&&!isHost));
+
+  document.getElementById('nextRoundBtn').classList.toggle('hidden',!isHost);
+  document.getElementById('waitHostMsg').classList.toggle('hidden',isHost);
 }
 
 window.hostNextRound=async function(){
@@ -1184,19 +1236,47 @@ window.hostNextRound=async function(){
   const numP=Object.keys(gs.players||{}).length;
   const pc=PLAYER_COUNTS[numP]||PLAYER_COUNTS[6];
   const donated=gs.donatedOrgans||[];
-  let organs=genOrgans(pc.organPerRunda);
-  // Add donated organs to queue for this round
-  organs=[...donated,...organs];
-  const patients=genPatients(pc.dying,pc.sick,pc.stable);
+
+  // NEW organs for this round
+  const newOrgans=genOrgans(pc.organPerRunda);
+  // Donated organs go to front of queue
+  const organs=[...donated,...newOrgans];
+
+  // NEW patients to ADD to existing queue (carry over non-dead, non-sold + add new ones)
+  const existing=(gs.patientQueue||[]).filter(p=>!p.dead&&!p.sold);
+  const newPatients=genPatients(pc.dying,pc.sick,pc.stable);
+  // Merge: existing first, then new (cap each column at MAX_COL)
+  const mergedDying=[...existing.filter(p=>p.status==='dying'),...newPatients.filter(p=>p.status==='dying')].slice(0,MAX_COL);
+  const mergedSick= [...existing.filter(p=>p.status==='sick'), ...newPatients.filter(p=>p.status==='sick') ].slice(0,MAX_COL);
+  const mergedStable=[...existing.filter(p=>p.status==='stable'),...newPatients.filter(p=>p.status==='stable')].slice(0,MAX_COL);
+  const patients=[...mergedDying,...mergedSick,...mergedStable];
+
   await update(ref(db,`rooms/${roomCode}`),{
     status:'overview',currentRound:(gs.currentRound||1)+1,
     phase:'buy',organQueue:organs,patientQueue:patients,
     currentOrganIndex:0,currentSellIndex:0,
-    timerStart:Date.now(),timerDuration:spd.buySpeed,
+    timerStart:serverNow(),timerDuration:spd.buy,
     lastWinner:null,phaseMsg:'Granska utbud och efterfrågan!',
     ready:{},donatedOrgans:[],
   });
 };
+
+// ── FINAL SCORES ──────────────────────────────────────────
+function showFinalScores(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  showScreen('screen-scores');
+  const players=gameState?.players||{};
+  const sorted=Object.values(players).map(p=>({...p,finalPts:(p.pts||0)-(p.loans||0)*LOAN_PENALTY})).sort((a,b)=>b.finalPts-a.finalPts);
+  const table=document.getElementById('scoreTable');table.innerHTML='';
+  sorted.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='score-row';
+    row.innerHTML=`<div class="score-rank ${i===0?'first':''}">${i===0?'🏆':i+1}</div>
+      <div class="score-name">${p.name}</div>
+      <div class="score-money">${p.money.toFixed(1)} KR</div>
+      <div class="score-pts">${p.finalPts} pts</div>`;
+    table.appendChild(row);
+  });
+}
 
 // ── MODAL ─────────────────────────────────────────────────
 window.openModal=function(bild){
