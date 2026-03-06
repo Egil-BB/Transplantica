@@ -24,10 +24,10 @@
   --muted: #4a6878;
   --mono:  'Courier Prime', monospace;
   --disp:  'Bebas Neue', sans-serif;
-  --heart-bg:  rgba(140,20,20,0.45);
-  --lung-bg:   rgba(10,50,100,0.45);
-  --kidney-bg: rgba(90,80,10,0.45);
-  --liver-bg:  rgba(10,80,40,0.45);
+  --heart-bg:  rgba(210,35,35,0.68);
+  --lung-bg:   rgba(25,95,210,0.68);
+  --kidney-bg: rgba(175,145,20,0.68);
+  --liver-bg:  rgba(20,158,68,0.68);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
@@ -130,14 +130,19 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .topbar{display:flex;align-items:center;background:var(--bg2);border-bottom:2px solid var(--teal);padding:.38rem .55rem;gap:.38rem;flex-shrink:0;}
 .topbar-phase{font-family:var(--disp);font-size:1rem;letter-spacing:.12em;color:var(--teal);flex:1;line-height:1.1;}
 .topbar-round{font-size:.5rem;letter-spacing:.15em;color:var(--muted);}
-.topbar-money{font-family:var(--disp);font-size:1.1rem;color:var(--green2);}
+.topbar-money{font-family:var(--disp);font-size:1.5rem;color:var(--green2);}
 .topbar-loan{background:transparent;border:1px solid var(--orange);color:var(--orange);font-family:var(--mono);font-size:.55rem;padding:.2rem .32rem;cursor:pointer;letter-spacing:.07em;white-space:nowrap;line-height:1.35;transition:all .12s;}
 .topbar-loan:hover{background:var(--orange);color:var(--bg);}
 .players-bar{display:flex;gap:.22rem;overflow-x:auto;padding:.22rem .4rem;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none;}
 .players-bar::-webkit-scrollbar{display:none;}
-.pchip{flex-shrink:0;background:var(--bg3);border:1px solid var(--line);padding:.13rem .38rem;font-size:.58rem;font-weight:700;white-space:nowrap;}
+.pchip{flex-shrink:0;background:var(--bg3);border:1px solid var(--line);padding:.2rem .5rem;font-size:.78rem;font-weight:700;white-space:nowrap;transition:opacity .2s,border-color .2s,color .2s,font-size .15s;}
 .pchip.me{border-color:var(--teal);color:var(--teal);}
-.pchip .pm{color:var(--green2);font-size:.52rem;}
+.pchip .pm{color:var(--green2);font-size:.68rem;}
+.pchip.sell-active{border-color:var(--green2);color:var(--green2);font-size:.95rem;padding:.25rem .6rem;}
+.pchip.sell-inactive{opacity:.28;filter:grayscale(1);}
+.inv-always-bar{display:flex;align-items:center;gap:.55rem;padding:.3rem .55rem;background:var(--bg2);border-bottom:2px solid var(--line);flex-shrink:0;}
+.inv-always-lbl{font-family:var(--disp);font-size:.6rem;letter-spacing:.22em;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.inv-always-pills{display:flex;gap:.25rem;flex-wrap:wrap;align-items:center;}
 
 /* BUY AREA: big organ left, queue right */
 .buy-area{display:flex;flex-shrink:0;border-bottom:2px solid var(--line);}
@@ -365,6 +370,10 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
     <button class="topbar-loan" onclick="takeLoan()">LÅN<br>+10KR</button>
   </div>
   <div class="players-bar" id="playersBar"></div>
+  <div class="inv-always-bar">
+    <span class="inv-always-lbl">LAGER</span>
+    <div class="inv-always-pills" id="invAlwaysPills"></div>
+  </div>
 
   <!-- BUY AREA -->
   <div class="buy-area" id="buyArea">
@@ -800,11 +809,24 @@ function renderGame(){
   document.getElementById('myMoneyDisplay').textContent=me.money.toFixed(1)+' KR';
 
   const pb=document.getElementById('playersBar');pb.innerHTML='';
+  const isSellPhase=gs.phase==='sell';
+  const activeForSell=isSellPhase?getActiveSellPatients(gs.patientQueue||[]):[];
+  const curPat=isSellPhase&&activeForSell[gs.currentSellIndex||0]?activeForSell[gs.currentSellIndex||0]:null;
   Object.entries(gs.players||{}).forEach(([pid,p])=>{
-    const c=document.createElement('div');c.className='pchip'+(pid===myPlayerId?' me':'');
-    c.innerHTML=`${p.name} <span class="pm">${p.money.toFixed(1)}kr</span>`;
+    const c=document.createElement('div');
+    let extra='';
+    if(curPat){const pInv=Object.keys(p.inventory||{});extra=curPat.organ.every(o=>pInv.includes(o))?' sell-active':' sell-inactive';}
+    c.className='pchip'+(pid===myPlayerId?' me':'')+extra;
+    const moneyHtml=pid===myPlayerId?` <span class="pm">${p.money.toFixed(1)}kr</span>`:'';
+    c.innerHTML=`${p.name}${moneyHtml}`;
     pb.appendChild(c);
   });
+
+  // Always-visible inventory
+  const invAlwaysPills=document.getElementById('invAlwaysPills');invAlwaysPills.innerHTML='';
+  const myInvKeys=Object.keys(me.inventory||{});
+  if(!myInvKeys.length){invAlwaysPills.innerHTML='<span style="font-size:.65rem;color:var(--muted);">Tomt lager</span>';}
+  else{myInvKeys.forEach(orgId=>{const pill=makeOrganPill(orgId,'org-pill-lg','');if(pill)invAlwaysPills.appendChild(pill);});}
 
   document.getElementById('statusBanner').textContent=gs.phaseMsg||'';
 
@@ -839,8 +861,10 @@ function renderBuyPhase(){
       const w=(gs.players||{})[gs.lastWinner];
       document.getElementById('statusBanner').textContent=gs.lastWinner===myPlayerId?'✓ Du köpte organet!':`${w?.name||'?'} köpte organet`;
     }
-  } else if(!me||me.money<0.5){btn.disabled=true;document.getElementById('statusBanner').textContent='Inte råd!';}
-  else{btn.disabled=false;}
+  } else {
+    // Button always enabled — auto-loan handles insufficient funds at click time
+    btn.disabled=false;
+  }
 }
 
 // ── SELL PHASE ────────────────────────────────────────────
@@ -994,6 +1018,7 @@ function startTimer(){
     const e=serverElapsed();
 
     if(gs.phase==='buy'){
+      if(gs.lastWinner) return; // Freeze timer display — organ sold/expired
       const max=gs.timerDuration||spd.buy;
       // Price: 30 → 0 over 'max' seconds
       const raw=Math.max(0,BUY_MAX*(1-(e/max)));
@@ -1042,12 +1067,26 @@ window.handleBuy=async function(){
   const price=parseFloat(Math.max(0,BUY_MAX*(1-(e/max))).toFixed(2));
   const me=(gs.players||{})[myPlayerId];
   const organId=(gs.organQueue||[])[gs.currentOrganIndex||0];if(!organId) return;
-  const newMoney=parseFloat((me.money-price).toFixed(2));
+  // Auto-loan if needed (bank never goes negative)
+  let currentMoney=me.money;
+  let currentLoans=me.loans||0;
+  let loansToTake=0;
+  while(currentMoney<price&&currentLoans+loansToTake<3){
+    currentMoney=parseFloat((currentMoney+LOAN_AMOUNT).toFixed(2));
+    loansToTake++;
+  }
+  if(currentMoney<price){
+    toast('Inte råd — inte ens med max lån!','err');
+    hasActedBuy=false;document.getElementById('buyBtn').disabled=false;return;
+  }
+  const newMoney=parseFloat((currentMoney-price).toFixed(2));
+  const newLoans=currentLoans+loansToTake;
   const newInv={...(me.inventory||{}),[organId]:true};
+  if(loansToTake>0)toast(`Lån taget automatiskt: +${loansToTake*LOAN_AMOUNT} kr`,'warn');
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,phaseMsg:`${myName} köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`});
-  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,inventory:newInv});
+  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,inventory:newInv,loans:newLoans});
   flash('teal');toast(`Köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`,'ok');
-  if(isHost) setTimeout(advanceBuy,2000);
+  if(isHost) setTimeout(advanceBuy,1500);
 };
 
 // ── SELL ACTION ───────────────────────────────────────────
@@ -1086,7 +1125,7 @@ window.handleSell=async function(){
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,patientQueue:updQ,phaseMsg:`${myName} sålde för ${paid.toFixed(1)} kr (+${p.pts}p)`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,pts:newPts,inventory:newInv,cured:newCured});
   flash('teal');toast(`Sålde för ${paid.toFixed(1)} kr! +${p.pts}p`,'ok');
-  if(isHost) setTimeout(advanceSell,2000);
+  if(isHost) setTimeout(advanceSell,1500);
 };
 
 // ── DEGRADATION ───────────────────────────────────────────
@@ -1178,8 +1217,8 @@ setInterval(()=>{
   if(lw&&lw!==_prevLW){_prevLW=lw;
     if(lw!==myPlayerId&&lw!=='NONE'){
       const gs=gameState;
-      if(gs.phase==='buy') setTimeout(advanceBuy,2000);
-      else if(gs.phase==='sell') setTimeout(advanceSell,2000);
+      if(gs.phase==='buy') setTimeout(advanceBuy,1500);
+      else if(gs.phase==='sell') setTimeout(advanceSell,1500);
     }
   }
 },300);
@@ -1221,8 +1260,9 @@ function showBetween(){
     if(!cured) curedHTML+='<span style="font-size:.62rem;color:var(--muted);">Inga botade</span>';
     curedHTML+='</div>';
 
+    const moneyPart=pid===myPlayerId?`${p.money.toFixed(1)} kr i kassan · `:'';
     row.innerHTML=`<div class="bp-name">${p.name}</div>${invHTML}${curedHTML}
-      <div class="bp-meta">${p.money.toFixed(1)} kr i kassan · ${p.loans||0} lån</div>`;
+      <div class="bp-meta">${moneyPart}${p.loans||0} lån</div>`;
     container.appendChild(row);
   });
 
