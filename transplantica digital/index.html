@@ -235,10 +235,16 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .st-bar{height:3px;background:var(--line);position:relative;margin:.1rem 0;}
 .st-fill{position:absolute;left:0;top:0;height:100%;transition:width .08s linear;}
 
-.sell-btn-wrap{padding:.28rem .45rem;flex-shrink:0;}
-.btn-sell{font-family:var(--disp);font-size:.95rem;letter-spacing:.12em;padding:.55rem .4rem;border:none;cursor:pointer;background:var(--green);color:#fff;width:100%;transition:all .12s;}
+.sell-btn-wrap{padding:.28rem .45rem;flex-shrink:0;display:flex;gap:.4rem;}
+.btn-sell{font-family:var(--disp);font-size:.95rem;letter-spacing:.12em;padding:.55rem .4rem;border:none;cursor:pointer;background:var(--green);color:#fff;flex:1;transition:all .12s;}
 .btn-sell:active:not(:disabled){transform:scale(0.96);}
 .btn-sell:disabled{opacity:.3;cursor:not-allowed;transform:none!important;}
+.btn-pass{font-family:var(--disp);font-size:.85rem;letter-spacing:.08em;padding:.55rem .6rem;background:transparent;border:1px solid var(--muted);color:var(--muted);cursor:pointer;flex:0 0 auto;transition:all .12s;}
+.btn-pass:hover:not(:disabled){border-color:var(--red2);color:var(--red2);}
+.btn-pass:disabled{opacity:.25;cursor:not-allowed;}
+/* Slide animation for sell panel */
+@keyframes patientSlideIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.sell-top.patient-enter{animation:patientSlideIn .28s cubic-bezier(0.2,0,0.3,1) forwards;}
 
 /* Patient queue rows */
 .sell-hdr{display:flex;align-items:center;justify-content:space-between;padding:.26rem .6rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.55rem;letter-spacing:.2em;color:var(--muted);flex-shrink:0;}
@@ -447,6 +453,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
           <div class="st-bar"><div class="st-fill" id="stFill" style="width:0%"></div></div>
         </div>
         <div class="sell-btn-wrap">
+          <button class="btn-pass hidden" id="passBtn" onclick="handlePass()">NEKA</button>
           <button class="btn-sell" id="sellBtn" onclick="handleSell()">SÄLJA — <span id="sellBtnPrice">0.0</span> KR</button>
         </div>
       </div>
@@ -673,10 +680,10 @@ function genOrgans(n){
   for(let i=0;i<n;i++){let x=Math.random()*tot;for(let j=0;j<keys.length;j++){x-=w[j];if(x<=0){r.push(keys[j]);break;}}if(r.length<=i)r.push('njurar');}
   return r;
 }
-function genPatients(nd,ns,nst){
-  // Fully random: any patient can end up in any column
+function genPatients(nd,ns,nst,excludeIds=new Set()){
+  // Fully random, excluding already-used patient IDs (no duplicates across rounds)
   const pool=shuffle(ALL_PATIENTS);
-  const used=new Set();
+  const used=new Set(excludeIds);
   function pick(n,status){
     const res=[];
     for(const p of pool){if(!used.has(p.id)&&res.length<Math.min(n,MAX_COL)){used.add(p.id);res.push({...p,status});}}
@@ -780,6 +787,7 @@ window.hostStartGame=async function(){
   const spd=SPEEDS[diff]||SPEEDS.normal;
   const organs=genOrgans(pc.organPerRunda);
   const patients=genPatients(pc.dying,pc.sick,pc.stable);
+  const usedPatientIds=patients.map(p=>p.id);
   const pu={};
   Object.keys(gameState.players||{}).forEach(pid=>{
     pu[`players/${pid}/money`]=STARTKAPITAL;
@@ -791,7 +799,7 @@ window.hostStartGame=async function(){
   // timerStart stored as real ms UTC — host uses serverNow()
   await update(ref(db,`rooms/${roomCode}`),{
     status:'overview',difficulty:diff,totalRounds:pc.rundor,currentRound:1,
-    phase:'buy',organQueue:organs,patientQueue:patients,
+    phase:'buy',organQueue:organs,patientQueue:patients,usedPatientIds,
     currentOrganIndex:0,currentSellIndex:0,
     timerStart:serverNow(),timerDuration:spd.buy,
     lastWinner:null,phaseMsg:'Granska utbud och efterfrågan!',ready:{},
@@ -967,7 +975,14 @@ function renderSellPhase(){
   const canSell=invHasAll(me?.inventory,p.organ);
   const budget=patientBudget(p);
 
-  // Big patient
+  // Big patient — animate slide-in when patient changes
+  const sellTop=document.getElementById('sellTop');
+  if(sellTop.dataset.pid!==String(p.id)){
+    sellTop.dataset.pid=String(p.id);
+    sellTop.classList.remove('patient-enter');
+    void sellTop.offsetWidth; // force reflow
+    sellTop.classList.add('patient-enter');
+  }
   document.getElementById('sellPatientImg').src=`images/patienter/${p.bild}`;
   const psb=document.getElementById('sellPatientStatusBar');
   psb.textContent=statusLabel(p.status);
@@ -1004,9 +1019,13 @@ function renderSellPhase(){
   const priceVal=document.getElementById('sellPriceVal');
   const sellBtn=document.getElementById('sellBtn');
 
+  const passBtn=document.getElementById('passBtn');
+  const acted=hasActedSell||!!gs.lastWinner;
+
   if(noOneCan){
     priceBlock.style.display='none';
     sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
+    passBtn.classList.add('hidden');passBtn.disabled=true;
     document.getElementById('stFill').style.width='0%';
     document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — hoppar automatiskt';
     if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,p),2500);}
@@ -1017,25 +1036,30 @@ function renderSellPhase(){
     document.getElementById('stFill').style.width='100%';
     document.getElementById('sellBtnPrice').textContent=budget.toFixed(1);
     if(canSell){
-      sellBtn.disabled=hasActedSell||!!gs.lastWinner;
-      sellBtn.style.background=(hasActedSell||gs.lastWinner)?'var(--muted)':'var(--green)';
-      if(!gs.lastWinner&&!hasActedSell) document.getElementById('statusBanner').textContent='Du är enda säljaren — klicka för maxpris!';
+      sellBtn.disabled=acted;
+      sellBtn.style.background=acted?'var(--muted)':'var(--green)';
+      // Show NEKA button — lets sole seller decline (patient degrades)
+      passBtn.classList.toggle('hidden',acted);
+      passBtn.disabled=acted;
+      if(!acted) document.getElementById('statusBanner').textContent='Du är enda säljaren — sälj eller neka!';
     } else {
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
+      passBtn.classList.add('hidden');passBtn.disabled=true;
       document.getElementById('statusBanner').textContent='Annan spelare kan sälja — inväntar...';
     }
     if(gs.lastWinner) sellBtn.disabled=true;
   } else {
     priceBlock.style.display='block';
     priceLbl.textContent='BASPRIS';
-    if(canSell&&!hasActedSell&&!gs.lastWinner){
+    passBtn.classList.add('hidden');passBtn.disabled=true;
+    if(canSell&&!acted){
       sellBtn.disabled=false;sellBtn.style.background='var(--green)';
       document.getElementById('statusBanner').textContent='✓ Klicka när priset är rätt!';
     } else if(!canSell){
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
       document.getElementById('statusBanner').textContent='Du saknar organ för denna patient';
     }
-    if(hasActedSell||gs.lastWinner){sellBtn.disabled=true;sellBtn.style.background='var(--muted)';}
+    if(acted){sellBtn.disabled=true;sellBtn.style.background='var(--muted)';}
     if(gs.lastWinner&&gs.lastWinner!=='NONE'){
       const w=(gs.players||{})[gs.lastWinner];
       document.getElementById('statusBanner').textContent=gs.lastWinner===myPlayerId?'✓ Du sålde!':`${w?.name||'?'} sålde`;
@@ -1245,6 +1269,22 @@ window.handleSell=async function(){
   if(isHost) setTimeout(advanceSell,2500);
 };
 
+// ── PASS (NEKA) ───────────────────────────────────────────
+window.handlePass=async function(){
+  if(hasActedSell) return;
+  const gs=gameState;if(!gs||gs.lastWinner) return;
+  hasActedSell=true;
+  document.getElementById('passBtn').disabled=true;
+  document.getElementById('sellBtn').disabled=true;
+  const patients=gs.patientQueue||[];
+  const idx=gs.currentSellIndex||0;
+  const p=getCurrentSellPatient(patients,gs.sellOrder,idx);
+  if(!p){hasActedSell=false;return;}
+  await update(ref(db,`rooms/${roomCode}`),{lastWinner:'NONE',phaseMsg:`${myName} nekade patienten — patienten försämras`});
+  flash('red');toast(`Nekade patient — försämras!`,'warn');
+  if(isHost) setTimeout(()=>doDegrade(patients,p),2000);
+};
+
 // ── DEGRADATION ───────────────────────────────────────────
 async function patientTimerExpired(){
   if(!isHost) return;
@@ -1404,7 +1444,10 @@ window.hostNextRound=async function(){
 
   // NEW patients to ADD to existing queue (carry over non-dead, non-sold + add new ones)
   const existing=(gs.patientQueue||[]).filter(p=>!p.dead&&!p.sold);
-  const newPatients=genPatients(pc.dying,pc.sick,pc.stable);
+  // Exclude all previously used patient IDs to prevent duplicates across rounds
+  const allUsedIds=new Set([...(gs.usedPatientIds||[]),...existing.map(p=>p.id)]);
+  const newPatients=genPatients(pc.dying,pc.sick,pc.stable,allUsedIds);
+  const usedPatientIds=[...allUsedIds,...newPatients.map(p=>p.id)];
   // Merge: existing first, then new (cap each column at MAX_COL)
   const mergedDying=[...existing.filter(p=>p.status==='dying'),...newPatients.filter(p=>p.status==='dying')].slice(0,MAX_COL);
   const mergedSick= [...existing.filter(p=>p.status==='sick'), ...newPatients.filter(p=>p.status==='sick') ].slice(0,MAX_COL);
@@ -1413,7 +1456,7 @@ window.hostNextRound=async function(){
 
   await update(ref(db,`rooms/${roomCode}`),{
     status:'overview',currentRound:(gs.currentRound||1)+1,
-    phase:'buy',organQueue:organs,patientQueue:patients,
+    phase:'buy',organQueue:organs,patientQueue:patients,usedPatientIds,
     currentOrganIndex:0,currentSellIndex:0,
     timerStart:serverNow(),timerDuration:spd.buy,
     lastWinner:null,phaseMsg:'Granska utbud och efterfrågan!',
