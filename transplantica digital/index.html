@@ -148,8 +148,8 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .buy-area{display:flex;flex-shrink:0;border-bottom:2px solid var(--line);}
 .buy-current-col{flex:0 0 50%;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg2);}
 .buy-organ-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.45rem;}
-.buy-organ-bg{border-radius:4px;padding:6px;display:flex;align-items:center;justify-content:center;}
-.buy-organ-bg img{width:82px;height:82px;object-fit:contain;display:block;}
+.buy-organ-bg{border-radius:4px;padding:8px;display:flex;align-items:center;justify-content:center;width:100%;}
+.buy-organ-bg img{width:100%;aspect-ratio:1;object-fit:contain;display:block;}
 .buy-organ-bg.hjärta{background:var(--heart-bg);}
 .buy-organ-bg.lungor{background:var(--lung-bg);}
 .buy-organ-bg.njurar{background:var(--kidney-bg);}
@@ -273,18 +273,26 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .flash-red{background:rgba(192,57,43,.2);animation:fout .5s forwards;}
 .flash-teal{background:rgba(46,184,200,.15);animation:fout .5s forwards;}
 @keyframes fout{0%{opacity:1}100%{opacity:0}}
-.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--teal);color:var(--teal);font-family:var(--mono);font-size:.76rem;padding:.42rem .85rem;z-index:2000;letter-spacing:.07em;white-space:nowrap;animation:tIn .2s ease-out,tOut .3s ease-in 2.5s forwards;}
+#toastStack{position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:.3rem;align-items:center;pointer-events:none;}
+.toast{background:var(--bg3);border:1px solid var(--teal);color:var(--teal);font-family:var(--mono);font-size:.76rem;padding:.42rem .85rem;letter-spacing:.07em;white-space:nowrap;animation:tIn .2s ease-out,tOut .3s ease-in 2.5s forwards;}
 .toast.t-ok{border-color:var(--green2);color:var(--green2);}
 .toast.t-err{border-color:var(--red2);color:var(--red2);}
 .toast.t-warn{border-color:var(--orange2);color:var(--orange2);}
-@keyframes tIn{from{opacity:0;top:.5rem}to{opacity:1;top:1rem}}
-@keyframes tOut{to{opacity:0;top:.5rem}}
+@keyframes tIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tOut{to{opacity:0;transform:translateY(-6px)}}
 @keyframes tick{0%{transform:scale(1.08)}100%{transform:scale(1)}}
 .tick{animation:tick .12s ease-out;}
+.pcard.done{opacity:.22;filter:grayscale(1);cursor:default;pointer-events:none;}
+.pcard.next-up{border:2px solid var(--teal);box-shadow:0 0 7px rgba(46,184,200,.5);}
+@keyframes dealIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.deal-anim{animation:dealIn .32s ease-out both;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.sell-top.vis{display:flex;animation:slideDown .28s ease-out;}
 </style>
 </head>
 <body>
 <div class="flash-overlay" id="flashOverlay"></div>
+<div id="toastStack"></div>
 
 <!-- LOBBY -->
 <div id="screen-lobby" class="screen active">
@@ -367,7 +375,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
       <div style="font-size:.48rem;letter-spacing:.15em;color:var(--muted);">KASSA</div>
       <div class="topbar-money" id="myMoneyDisplay">40.0 KR</div>
     </div>
-    <button class="topbar-loan" onclick="takeLoan()">LÅN<br>+10KR</button>
+    <button class="topbar-loan" id="loanBtn" onclick="takeLoan()">LÅN 0/3<br>+10KR</button>
   </div>
   <div class="players-bar" id="playersBar"></div>
   <div class="inv-always-bar">
@@ -578,7 +586,7 @@ const ALL_PATIENTS=[
 
 let myPlayerId=null,myName='',roomCode='',isHost=false;
 let gameState=null,timerInterval=null;
-let hasActedBuy=false,hasActedSell=false,prevItemKey=null,_prevLW=null;
+let hasActedBuy=false,hasActedSell=false,prevItemKey=null,_prevLW=null,_prevEventT=null;
 // Clock offset: difference between our local clock and Firebase server time
 let clockOffset=0; // ms, positive = our clock is ahead
 
@@ -598,7 +606,7 @@ const syncedElapsed=()=>{
 };
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('active',el.id===id));}
-function toast(msg,type=''){const t=document.createElement('div');t.className='toast'+(type?' t-'+type:'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3200);}
+function toast(msg,type=''){const s=document.getElementById('toastStack');const t=document.createElement('div');t.className='toast'+(type?' t-'+type:'');t.textContent=msg;s.appendChild(t);setTimeout(()=>t.remove(),3200);}
 function flash(c){const el=document.getElementById('flashOverlay');el.className='flash-overlay flash-'+c;setTimeout(()=>el.className='flash-overlay',600);}
 
 // Organ pill (image only, no text)
@@ -616,9 +624,15 @@ function genOrgans(n){
   return r;
 }
 function genPatients(nd,ns,nst){
-  const d=shuffle(ALL_PATIENTS.filter(p=>p.organ.length>=3)).slice(0,Math.min(nd,MAX_COL)).map(p=>({...p,status:'dying'}));
-  const s=shuffle(ALL_PATIENTS.filter(p=>p.organ.length===2)).slice(0,Math.min(ns,MAX_COL)).map(p=>({...p,status:'sick'}));
-  const st=shuffle(ALL_PATIENTS.filter(p=>p.organ.length===1)).slice(0,Math.min(nst,MAX_COL)).map(p=>({...p,status:'stable'}));
+  // Fully random: any patient can end up in any column
+  const pool=shuffle(ALL_PATIENTS);
+  const used=new Set();
+  function pick(n,status){
+    const res=[];
+    for(const p of pool){if(!used.has(p.id)&&res.length<Math.min(n,MAX_COL)){used.add(p.id);res.push({...p,status});}}
+    return res;
+  }
+  const d=pick(nd,'dying'),s=pick(ns,'sick'),st=pick(nst,'stable');
   return [...d,...s,...st];
 }
 
@@ -751,9 +765,20 @@ function renderOverview(){
   });
 
   const patients=gs.patientQueue||[];
-  fillOvCol('ovColDying',  patients.filter(p=>p.status==='dying'&&!p.dead&&!p.sold));
-  fillOvCol('ovColSick',   patients.filter(p=>p.status==='sick' &&!p.dead&&!p.sold));
-  fillOvCol('ovColStable', patients.filter(p=>p.status==='stable'&&!p.dead&&!p.sold));
+  const dying=patients.filter(p=>p.status==='dying'&&!p.dead&&!p.sold);
+  const sick=patients.filter(p=>p.status==='sick'&&!p.dead&&!p.sold);
+  const stable=patients.filter(p=>p.status==='stable'&&!p.dead&&!p.sold);
+  // Compute interleaved deal delays: d[0],s[0],st[0],d[1],s[1],st[1],...
+  const maxLen=Math.max(dying.length,sick.length,stable.length);
+  let gi=0;const delays={d:{},s:{},st:{}};
+  for(let row=0;row<maxLen;row++){
+    if(row<dying.length) delays.d[dying[row].id]=gi++;
+    if(row<sick.length)  delays.s[sick[row].id]=gi++;
+    if(row<stable.length)delays.st[stable[row].id]=gi++;
+  }
+  fillOvCol('ovColDying',  dying,  delays.d);
+  fillOvCol('ovColSick',   sick,   delays.s);
+  fillOvCol('ovColStable', stable, delays.st);
 
   const rm=gs.ready||{},pl=gs.players||{};
   const rc=document.getElementById('ovReadyChips');rc.innerHTML='';
@@ -780,12 +805,14 @@ function renderOverview(){
   }
 }
 
-function fillOvCol(elId,patients){
+function fillOvCol(elId,patients,delays={}){
   const el=document.getElementById(elId);el.innerHTML='';
   const vis=patients.slice(0,MAX_COL);
   if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.2rem;grid-column:1/-1;">–</div>';return;}
   vis.forEach(p=>{
-    const card=document.createElement('div');card.className='ov-pcard';
+    const card=document.createElement('div');
+    card.className='ov-pcard deal-anim';
+    card.style.animationDelay=`${(delays[p.id]||0)*0.1}s`;
     card.innerHTML=`<img src="images/patienter/${p.bild}" alt="" onerror="this.style.display='none'">`;
     card.onclick=()=>openModal(p.bild);
     el.appendChild(card);
@@ -807,6 +834,13 @@ function renderGame(){
   document.getElementById('phaseLabel').textContent=gs.phase==='buy'?'KÖPFAS':'SÄLJFAS';
   document.getElementById('roundInfo').textContent=`RUNDA ${gs.currentRound}/${gs.totalRounds}`;
   document.getElementById('myMoneyDisplay').textContent=me.money.toFixed(1)+' KR';
+  // Loan button counter
+  const loanBtn=document.getElementById('loanBtn');
+  if(loanBtn){const ml=me.loans||0;loanBtn.innerHTML=`LÅN ${ml}/3<br>+10KR`;loanBtn.disabled=ml>=3;}
+  // Show other players' loan events
+  const ev=gs.lastEvent;
+  if(ev?.type==='loan'&&ev.player!==myName&&ev.t!==_prevEventT){_prevEventT=ev.t;toast(`${ev.player} tog ett lån (${ev.loans}/3)`);}
+  else if(ev?.t&&ev.t!==_prevEventT){_prevEventT=ev.t;}
 
   const pb=document.getElementById('playersBar');pb.innerHTML='';
   const isSellPhase=gs.phase==='sell';
@@ -921,7 +955,7 @@ function renderSellPhase(){
     sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
     document.getElementById('stFill').style.width='0%';
     document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — hoppar automatiskt';
-    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,idx),1800);}
+    if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,p),1800);}
   } else if(onlyOneCan){
     priceBlock.style.display='block';
     priceLbl.textContent='MAXPRIS (du är enda säljaren)';
@@ -985,20 +1019,29 @@ function renderPatientCols(){
   const active=getActiveSellPatients(patients);
   const curIdx=gs.currentSellIndex||0;
   const currentPatient=gs.phase==='sell'&&curIdx<active.length?active[curIdx]:null;
+  const nextPatient=gs.phase==='sell'&&(curIdx+1)<active.length?active[curIdx+1]:null;
 
   document.getElementById('patientQCount').textContent=patients.filter(p=>!p.dead&&!p.sold).length+' st';
 
   function fillCol(elId,group){
     const el=document.getElementById(elId);el.innerHTML='';
-    const vis=group.filter(p=>!p.dead&&!p.sold).slice(0,MAX_COL);
+    // Show all (including done) up to MAX_COL
+    const vis=group.slice(0,MAX_COL);
     if(!vis.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.18rem;grid-column:1/-1;">–</div>';return;}
     vis.forEach(p=>{
-      if(currentPatient&&p.id===currentPatient.id&&p.status===currentPatient.status) return; // shown large
-      const canSell=p.organ.every(o=>myInv.includes(o));
+      // Current patient is shown large in sell area — skip in queue
+      if(currentPatient&&p.id===currentPatient.id&&p.status===currentPatient.status) return;
+      const isDone=p.dead||p.sold;
+      const isNext=!isDone&&nextPatient&&p.id===nextPatient.id&&p.status===nextPatient.status;
+      const canSell=!isDone&&p.organ.every(o=>myInv.includes(o));
       const card=document.createElement('div');
-      card.className='pcard'+(canSell&&gs.phase==='sell'?' can-sell':'');
+      let cls='pcard';
+      if(isDone) cls+=' done';
+      else if(isNext) cls+=' next-up';
+      else if(canSell&&gs.phase==='sell') cls+=' can-sell';
+      card.className=cls;
       card.innerHTML=`<img src="images/patienter/${p.bild}" alt="" onerror="this.style.display='none'">`;
-      card.onclick=()=>openModal(p.bild);
+      if(!isDone) card.onclick=()=>openModal(p.bild);
       el.appendChild(card);
     });
     if(!el.children.length) el.innerHTML='<div style="font-size:.6rem;color:var(--muted);padding:.18rem;grid-column:1/-1;">–</div>';
@@ -1006,6 +1049,22 @@ function renderPatientCols(){
   fillCol('pcolDying',  patients.filter(p=>p.status==='dying'));
   fillCol('pcolSick',   patients.filter(p=>p.status==='sick'));
   fillCol('pcolStable', patients.filter(p=>p.status==='stable'));
+}
+
+// ── NON-LINEAR PRICE FUNCTIONS ────────────────────────────
+// Buy: fast 30→20, fast 20→15, slower 15→10, normal 10→5, slow 5→0
+function buyPriceFromT(t){
+  if(t<=0) return BUY_MAX;if(t>=1) return 0;
+  const segs=[{t0:0,t1:.10,p0:30,p1:20},{t0:.10,t1:.20,p0:20,p1:15},{t0:.20,t1:.40,p0:15,p1:10},{t0:.40,t1:.65,p0:10,p1:5},{t0:.65,t1:1,p0:5,p1:0}];
+  for(const s of segs)if(t>=s.t0&&t<=s.t1)return s.p0+(s.p1-s.p0)*(t-s.t0)/(s.t1-s.t0);
+  return 0;
+}
+// Sell: first 30% of budget fast, next 30% medium, last 40% slow
+function sellPriceFromT(t,budget){
+  if(t<=0) return 0;if(t>=1) return budget;
+  const segs=[{t0:0,t1:.20,p0:0,p1:budget*.3},{t0:.20,t1:.55,p0:budget*.3,p1:budget*.6},{t0:.55,t1:1,p0:budget*.6,p1:budget}];
+  for(const s of segs)if(t>=s.t0&&t<=s.t1)return s.p0+(s.p1-s.p0)*(t-s.t0)/(s.t1-s.t0);
+  return budget;
 }
 
 // ── TIMER (uses serverElapsed for sync) ───────────────────
@@ -1020,8 +1079,8 @@ function startTimer(){
     if(gs.phase==='buy'){
       if(gs.lastWinner) return; // Freeze timer display — organ sold/expired
       const max=gs.timerDuration||spd.buy;
-      // Price: 30 → 0 over 'max' seconds
-      const raw=Math.max(0,BUY_MAX*(1-(e/max)));
+      // Price: 30 → 0 non-linearly over 'max' seconds
+      const raw=Math.max(0,buyPriceFromT(e/max));
       const pct=(raw/BUY_MAX)*100;
       const d=document.getElementById('priceDisplay');
       const f=document.getElementById('priceBarFill');
@@ -1045,8 +1104,8 @@ function startTimer(){
 
       const max=gs.timerDuration||spd.sell;
       const budget=patientBudget(p);
-      const raw=Math.min(budget,budget*(e/max));
-      const pct=Math.min(100,(e/max)*100);
+      const raw=Math.min(budget,sellPriceFromT(e/max,budget));
+      const pct=Math.min(100,(raw/budget)*100);
       const sv=document.getElementById('sellPriceVal');
       const f=document.getElementById('stFill');
       const txt=raw.toFixed(1);
@@ -1064,7 +1123,7 @@ window.handleBuy=async function(){
   const gs=gameState;if(!gs||gs.lastWinner) return;
   hasActedBuy=true;document.getElementById('buyBtn').disabled=true;
   const e=serverElapsed(),max=gs.timerDuration||getSpeed().buy;
-  const price=parseFloat(Math.max(0,BUY_MAX*(1-(e/max))).toFixed(2));
+  const price=parseFloat(Math.max(0,buyPriceFromT(e/max)).toFixed(2));
   const me=(gs.players||{})[myPlayerId];
   const organId=(gs.organQueue||[])[gs.currentOrganIndex||0];if(!organId) return;
   // Auto-loan if needed (bank never goes negative)
@@ -1082,7 +1141,10 @@ window.handleBuy=async function(){
   const newMoney=parseFloat((currentMoney-price).toFixed(2));
   const newLoans=currentLoans+loansToTake;
   const newInv={...(me.inventory||{}),[organId]:true};
-  if(loansToTake>0)toast(`Lån taget automatiskt: +${loansToTake*LOAN_AMOUNT} kr`,'warn');
+  if(loansToTake>0){
+    toast(`Lån taget automatiskt: +${loansToTake*LOAN_AMOUNT} kr`,'warn');
+    update(ref(db,`rooms/${roomCode}`),{lastEvent:{type:'loan',player:myName,loans:newLoans,t:serverNow()}});
+  }
   await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,phaseMsg:`${myName} köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,inventory:newInv,loans:newLoans});
   flash('teal');toast(`Köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`,'ok');
@@ -1111,7 +1173,7 @@ window.handleSell=async function(){
     paid=budget;
   } else {
     const e=serverElapsed(),max=gs.timerDuration||getSpeed().sell;
-    paid=parseFloat(Math.min(budget,budget*(e/max)).toFixed(2));
+    paid=parseFloat(Math.min(budget,sellPriceFromT(e/max,budget)).toFixed(2));
   }
 
   const newInv={...(me.inventory||{})};p.organ.forEach(o=>delete newInv[o]);
@@ -1214,7 +1276,8 @@ async function organExpired(){
 setInterval(()=>{
   if(!gameState||!isHost) return;
   const lw=gameState.lastWinner;
-  if(lw&&lw!==_prevLW){_prevLW=lw;
+  if(!lw){_prevLW=null;return;} // reset so next winner always triggers
+  if(lw!==_prevLW){_prevLW=lw;
     if(lw!==myPlayerId&&lw!=='NONE'){
       const gs=gameState;
       if(gs.phase==='buy') setTimeout(advanceBuy,1500);
@@ -1227,9 +1290,11 @@ setInterval(()=>{
 window.takeLoan=async function(){
   const me=(gameState?.players||{})[myPlayerId];if(!me) return;
   if((me.loans||0)>=3){toast('Max 3 lån!','err');return;}
+  const newLoans=(me.loans||0)+1;
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{
-    money:parseFloat((me.money+LOAN_AMOUNT).toFixed(2)),loans:(me.loans||0)+1});
-  toast(`+${LOAN_AMOUNT} kr (lån ${(me.loans||0)+1}/3)`);
+    money:parseFloat((me.money+LOAN_AMOUNT).toFixed(2)),loans:newLoans});
+  await update(ref(db,`rooms/${roomCode}`),{lastEvent:{type:'loan',player:myName,loans:newLoans,t:serverNow()}});
+  toast(`+${LOAN_AMOUNT} kr (lån ${newLoans}/3)`);
 };
 
 // ── BETWEEN ROUNDS ────────────────────────────────────────
@@ -1306,14 +1371,14 @@ function showFinalScores(){
   if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
   showScreen('screen-scores');
   const players=gameState?.players||{};
-  const sorted=Object.values(players).map(p=>({...p,finalPts:(p.pts||0)-(p.loans||0)*LOAN_PENALTY})).sort((a,b)=>b.finalPts-a.finalPts);
+  // Total = money + pts - loan penalties (one single number)
+  const sorted=Object.values(players).map(p=>({...p,total:parseFloat(((p.money||0)+(p.pts||0)-(p.loans||0)*LOAN_PENALTY).toFixed(1))})).sort((a,b)=>b.total-a.total);
   const table=document.getElementById('scoreTable');table.innerHTML='';
   sorted.forEach((p,i)=>{
     const row=document.createElement('div');row.className='score-row';
     row.innerHTML=`<div class="score-rank ${i===0?'first':''}">${i===0?'🏆':i+1}</div>
       <div class="score-name">${p.name}</div>
-      <div class="score-money">${p.money.toFixed(1)} KR</div>
-      <div class="score-pts">${p.finalPts} pts</div>`;
+      <div class="score-money" style="font-size:1.15rem">${p.total.toFixed(1)}</div>`;
     table.appendChild(row);
   });
 }
