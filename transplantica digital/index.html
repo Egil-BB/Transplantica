@@ -6,6 +6,7 @@
 <title>Transplantica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 :root {
   --bg:    #09141a;
@@ -306,10 +307,10 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .deal-anim{animation:dealIn .32s ease-out both;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 .sell-top.vis{display:flex;animation:slideDown .28s ease-out;}
-/* Round-end overlay */
-.roundend-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:800;display:none;align-items:center;justify-content:center;padding:1.5rem;}
-.roundend-overlay.open{display:flex;}
-.roundend-box{background:var(--bg2);border:2px solid var(--teal);padding:2rem 1.5rem;max-width:320px;width:100%;text-align:center;display:flex;flex-direction:column;gap:1.2rem;box-shadow:0 8px 40px rgba(0,0,0,.8);}
+/* QR code box */
+.qr-box{width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--line);border-top:2px solid var(--teal);padding:1rem;display:none;flex-direction:column;align-items:center;gap:.6rem;}
+.qr-box canvas{border-radius:4px;}
+.qr-url{font-size:.58rem;letter-spacing:.06em;color:var(--muted);text-align:center;word-break:break-all;}
 
 /* ── STAFF BAR ── */
 .staff-bar{display:flex;align-items:center;gap:.45rem;padding:.28rem .55rem;background:var(--bg);border-bottom:2px solid var(--line);flex-shrink:0;}
@@ -369,6 +370,11 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   <div class="waiting-inner">
     <div><div class="cd-label">RUMSKOD — DELA MED VÄNNER</div><div class="cd-code" id="displayCode">----</div></div>
     <div class="plist-box" id="waitingPlayerList"><h3>ANSLUTNA SPELARE</h3></div>
+    <div class="qr-box" id="qrBox">
+      <h2 style="font-family:var(--disp);font-size:.78rem;letter-spacing:.3em;color:var(--muted);">SKANNA FÖR ATT GÅ MED</h2>
+      <canvas id="qrCanvas"></canvas>
+      <div class="qr-url" id="qrUrl"></div>
+    </div>
     <div class="settings-row" id="diffRow">
       <label>Svårighetsgrad:</label>
       <select id="difficultySelect">
@@ -553,16 +559,6 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
     <div class="discard-organ-list" id="discardOrganList"></div>
     <button class="btn btn-primary" onclick="confirmDiscard()">KASSERA &amp; SÄLJA</button>
     <button class="btn btn-ghost" onclick="closeDiscardModal()" style="margin-top:-.4rem;">AVBRYT</button>
-  </div>
-</div>
-
-<!-- Round-end overlay -->
-<div class="roundend-overlay" id="roundEndOverlay">
-  <div class="roundend-box">
-    <div style="font-family:var(--disp);font-size:2.2rem;color:var(--teal);letter-spacing:.15em;">RUNDA SLUT</div>
-    <div style="font-size:.9rem;color:var(--muted);">Alla patienter är behandlade</div>
-    <button class="btn btn-primary hidden" id="roundEndBtn" onclick="hostEndRound()">VISA RUNDASLUT →</button>
-    <div style="font-size:.8rem;color:var(--muted);" id="roundEndWait" class="hidden">Väntar på värden...</div>
   </div>
 </div>
 
@@ -788,6 +784,11 @@ async function calibrateClock(){
 }
 await calibrateClock();
 
+// Auto-fill room code if URL contains ?room=XXXX (e.g. from QR scan)
+{const p=new URLSearchParams(window.location.search).get('room');
+if(p){document.getElementById('joinCode').value=p.toUpperCase().slice(0,4);
+document.getElementById('playerName').focus();}}
+
 // serverNow() returns current server time estimate in ms
 const serverNow=()=>Date.now()+clockOffset;
 const serverElapsed=()=>{
@@ -809,6 +810,16 @@ window.createGame=async function(){
   document.getElementById('displayCode').textContent=roomCode;
   document.getElementById('diffRow').style.display='';
   document.getElementById('startGameBtn').style.display='';
+  // Generate QR code linking directly to this room
+  const joinUrl=`https://transplanticadigital.netlify.app/?room=${roomCode}`;
+  const qrBox=document.getElementById('qrBox');
+  qrBox.style.display='flex';
+  document.getElementById('qrUrl').textContent=joinUrl;
+  QRCode.toCanvas(document.getElementById('qrCanvas'),joinUrl,{
+    width:180,
+    color:{dark:'#2eb8c8',light:'#0d1e26'},
+    errorCorrectionLevel:'M',
+  });
   showScreen('screen-waiting');
 };
 
@@ -840,7 +851,6 @@ function listenToRoom(){
     else if(s==='overview'){showScreen('screen-overview');renderOverview();}
     else if(s==='playing') {showScreen('screen-game');renderGame();}
     else if(s==='between') showBetween();
-    else if(s==='roundend') showRoundEnd();
     else if(s==='final')   showFinalScores();
   });
 }
@@ -1445,8 +1455,14 @@ async function advanceSell(){
   const nextIdx=(gs.currentSellIndex||0)+1;
 
   if(nextIdx>=sellOrder.length){
-    // End of sell phase — show round-end screen (host clicks to continue)
-    await update(ref(db,`rooms/${roomCode}`),{status:'roundend',phaseMsg:'Runda slut!'});
+    // End of sell phase — reset hire cost now so between-screen shows 1kr, then auto-advance after 3s
+    await update(ref(db,`rooms/${roomCode}`),{
+      phaseMsg:'Runda slut!',lastWinner:null,staffPool:{cost:1}
+    });
+    const curr=gs.currentRound||1,total=gs.totalRounds||3;
+    setTimeout(async()=>{
+      await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'between'});
+    },3000);
   } else {
     await update(ref(db,`rooms/${roomCode}`),{
       currentSellIndex:nextIdx,
@@ -1591,7 +1607,7 @@ window.hostNextRound=async function(){
     currentOrganIndex:0,currentSellIndex:0,
     timerStart:serverNow(),timerDuration:spd.buy,
     lastWinner:null,phaseMsg:'Granska utbud och efterfrågan!',
-    ready:{},donatedOrgans:[],staffPool:{cost:1},
+    ready:{},donatedOrgans:[],
     ...playerUpdates,
   });
 };
@@ -1707,23 +1723,6 @@ window.openModal=function(bild){
 window.closeModal=function(){document.getElementById('patientModal').classList.remove('open');};
 window.closeModalOutside=function(e){if(e.target===document.getElementById('patientModal'))closeModal();};
 
-// ── ROUND END ─────────────────────────────────────────────
-function showRoundEnd(){
-  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
-  showScreen('screen-game');
-  const overlay=document.getElementById('roundEndOverlay');
-  overlay.classList.add('open');
-  document.getElementById('roundEndBtn').classList.toggle('hidden',!isHost);
-  document.getElementById('roundEndWait').classList.toggle('hidden',isHost);
-}
-
-window.hostEndRound=async function(){
-  if(!isHost) return;
-  document.getElementById('roundEndOverlay').classList.remove('open');
-  const gs=gameState;
-  const curr=gs.currentRound||1,total=gs.totalRounds||3;
-  await update(ref(db,`rooms/${roomCode}`),{status:curr>=total?'final':'between'});
-};
 </script>
 </body>
 </html>
