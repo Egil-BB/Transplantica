@@ -339,16 +339,12 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .between-staff{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--teal);padding:.7rem .9rem;display:flex;flex-direction:column;gap:.45rem;}
 .between-staff-hdr{font-family:var(--disp);font-size:.82rem;letter-spacing:.14em;color:var(--teal);}
 .between-staff-row{display:flex;align-items:center;gap:.65rem;}
-/* Sell area complexity row */
-.sell-comp-row{padding:.22rem .45rem;border-bottom:1px solid var(--line);flex-shrink:0;display:flex;align-items:center;gap:.4rem;}
-.sell-comp-lbl{font-size:.46rem;letter-spacing:.18em;color:var(--muted);}
-.sell-comp-val{font-family:var(--disp);font-size:.9rem;}
-.sell-comp-ok{color:var(--green2);}
-.sell-comp-warn{color:var(--orange2);}
-.sell-comp-err{color:var(--red2);}
-/* Discard modal */
-.discard-box{background:var(--bg2);border:2px solid var(--orange2);padding:1.5rem 1.2rem;max-width:300px;width:100%;text-align:center;display:flex;flex-direction:column;gap:.9rem;box-shadow:0 8px 40px rgba(0,0,0,.8);}
-.discard-organ-list{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:center;}
+/* Sell phase status — colored banner states */
+.status-banner.can-sell{background:rgba(26,138,80,.18);border-bottom:1px solid var(--green2);color:var(--green2);font-size:.78rem;font-weight:700;}
+.status-banner.sole-sell{background:rgba(46,184,200,.14);border-bottom:1px solid var(--teal);color:var(--teal);font-size:.78rem;font-weight:700;}
+.status-banner.cant-sell{background:rgba(74,104,120,.10);border-bottom:1px solid var(--line);color:var(--muted);}
+/* Hired staff label */
+.staff-hired-note{font-size:.52rem;color:var(--orange2);letter-spacing:.06em;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -455,7 +451,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   <div class="staff-bar" id="staffBar">
     <span class="staff-bar-lbl">PERSONAL</span>
     <div class="staff-emojis" id="staffEmojis"></div>
-    <span class="staff-comp hidden" id="staffCompLbl"></span>
+    <span class="staff-hired-note hidden" id="staffHiredNote">+HYRD FÖRSVINNER</span>
     <button class="btn-hire" id="hireBtn" onclick="handleHire()">ANLITA</button>
   </div>
 
@@ -497,10 +493,6 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
           <div class="sn-lbl">PATIENTEN BEHÖVER</div>
           <div class="sn-pills" id="sellNeededPills"></div>
         </div>
-        <div class="sell-comp-row" id="sellCompRow">
-          <span class="sell-comp-lbl">PERSONAL</span>
-          <span class="sell-comp-val" id="sellCompVal">—</span>
-        </div>
         <div class="sell-price-block" id="sellPriceBlock">
           <div class="sp-lbl" id="sellPriceLbl">BASPRIS</div>
           <div class="sp-val" id="sellPriceVal">0.0 KR</div>
@@ -539,7 +531,8 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
         <span style="font-size:.68rem;color:var(--muted);" id="betweenCapLbl"></span>
         <button class="btn-hire" id="betweenHireBtn" onclick="handleHire()" style="margin-left:auto;">ANLITA</button>
       </div>
-      <div style="font-size:.65rem;color:var(--orange2);" id="betweenCapWarning" class="hidden">⚠ Organ överstiger lagerkapacitet — kasseras vid nästa runda</div>
+      <div style="font-size:.62rem;color:var(--orange2);line-height:1.4;" id="betweenCapWarning" class="hidden">⚠ Du har fler organ än lagerplatser — anlita personal nu eller organ kasseras vid nästa runda</div>
+      <div style="font-size:.58rem;color:var(--muted);margin-top:-.1rem;">Hyrd personal nollställs varje runda. Anlita för att täcka upp organ.</div>
     </div>
     <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:.5rem;">
       <button class="btn btn-primary hidden" id="nextRoundBtn" onclick="hostNextRound()">NÄSTA RUNDA →</button>
@@ -612,20 +605,10 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   </div>
 </div>
 
-<!-- Discard confirm modal -->
-<div class="modal-overlay" id="discardModal" onclick="closeDiscardOutside(event)">
-  <div class="discard-box">
-    <div style="font-family:var(--disp);font-size:1.5rem;color:var(--orange2);letter-spacing:.1em;">KASSERA ORGAN?</div>
-    <div style="font-size:.82rem;color:var(--text);line-height:1.55;" id="discardMsg"></div>
-    <div class="discard-organ-list" id="discardOrganList"></div>
-    <button class="btn btn-primary" onclick="confirmDiscard()">KASSERA &amp; SÄLJA</button>
-    <button class="btn btn-ghost" onclick="closeDiscardModal()" style="margin-top:-.4rem;">AVBRYT</button>
-  </div>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, serverTimestamp }
+import { getDatabase, ref, set, get, onValue, update, serverTimestamp, runTransaction }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // ── FIREBASE ─────────────────────────────────────────────
@@ -669,9 +652,9 @@ const PLAYER_COUNTS={
 
 // Difficulty = timer SPEED only. Buy price always 30→0. Sell price 0→patient budget.
 const SPEEDS={
-  easy:  {buy:30, sell:30},
-  normal:{buy:15, sell:15},
-  hard:  {buy:6,  sell:6},
+  easy:  {buy:26, sell:26},
+  normal:{buy:13, sell:13},
+  hard:  {buy:5,  sell:5},
 };
 const BUY_MAX=30;
 const STARTKAPITAL=40;
@@ -680,7 +663,7 @@ const LOAN_PENALTY=2;
 const MAX_COL=6;
 const CARD_BACK='images/patienter/patienter_45.png';
 const STAFF_BASE=2; // permanent staff per player (cross-round)
-const HIRE_DELTA={1:0.3,2:0.3,3:0.3,4:0.2,5:0.1,6:0.1}; // cost increase per hire by player count
+const HIRE_DELTA={1:0.25,2:0.25,3:0.25,4:0.15,5:0.05,6:0.05}; // cost increase per hire by player count
 const HIRE_MAX=3.0; // max hire cost
 
 // 44 patients only (45 = card back)
@@ -771,19 +754,6 @@ function getStaff(player){return STAFF_BASE+(player?.staff?.hired||0);}
 function getOrgCap(player){return getStaff(player)*2;}
 function staffHireDelta(numPlayers){return HIRE_DELTA[numPlayers]||0.2;}
 function getHireCost(gs){return gs?.staffPool?.cost??1;}
-// Returns list of organ IDs not needed for a patient (candidates for discard)
-function getOrgansToDiscard(inventory,neededOrgans){
-  const needed=new Set(neededOrgans);
-  return invList(inventory).filter(o=>!needed.has(o));
-}
-// Staff available for operation: staffForOp = total - ceil(allOrgs/2) + ceil(neededOrgs/2)
-// Can operate if staffForOp >= comp
-function calcStaffForOp(player,neededOrgans){
-  const total=getStaff(player);
-  const allOrgs=invList(player?.inventory||{}).length;
-  const neededOrgs=neededOrgans.filter(o=>invHas(player?.inventory,o)).length;
-  return total-Math.ceil(allOrgs/2)+Math.ceil(neededOrgs/2);
-}
 
 // ── SELL ORDER HELPER ─────────────────────────────────────────────────────
 // Gets patient from patientQueue by sellOrder direct index (fixes skipped-patient bug)
@@ -1074,25 +1044,15 @@ function renderGame(){
   // Staff bar
   const totalStaff=getStaff(me),hired=me.staff?.hired||0;
   const staffEl=document.getElementById('staffEmojis');staffEl.innerHTML='';
-  for(let i=0;i<STAFF_BASE;i++){const s=document.createElement('span');s.className='staff-emoji perm';s.textContent='👩‍⚕️';staffEl.appendChild(s);}
-  for(let i=0;i<hired;i++){const s=document.createElement('span');s.className='staff-emoji hired';s.textContent='👩‍⚕️';staffEl.appendChild(s);}
+  for(let i=0;i<STAFF_BASE;i++){const s=document.createElement('span');s.className='staff-emoji perm';s.title='Fast personal (stannar)';s.textContent='👩‍⚕️';staffEl.appendChild(s);}
+  for(let i=0;i<hired;i++){const s=document.createElement('span');s.className='staff-emoji hired';s.title='Hyrd personal (försvinner vid rundes slut)';s.textContent='👩‍⚕️';staffEl.appendChild(s);}
+  // Show hired-reset note if player has hired staff
+  document.getElementById('staffHiredNote').classList.toggle('hidden',hired===0);
   // Hire button: show cost if available
   const hireCost=getHireCost(gs);
   const hireBtn=document.getElementById('hireBtn');
   hireBtn.textContent=hireCost>HIRE_MAX?'FULLT':'ANLITA '+hireCost.toFixed(1)+'KR';
   hireBtn.disabled=hireCost>HIRE_MAX||me.money<hireCost;
-  // Complexity indicator (sell phase only)
-  const staffCompLbl=document.getElementById('staffCompLbl');
-  if(gs.phase==='sell'){
-    const curPat2=getCurrentSellPatient(gs.patientQueue||[],gs.sellOrder,gs.currentSellIndex||0);
-    if(curPat2){
-      const comp2=curPat2.comp||1;
-      const sfo=calcStaffForOp(me,curPat2.organ);
-      staffCompLbl.classList.remove('hidden');
-      staffCompLbl.className='staff-comp '+(sfo>=comp2?'sell-comp-ok':'sell-comp-err');
-      staffCompLbl.textContent=`OP: ${sfo}/${comp2}👩‍⚕️`;
-    } else {staffCompLbl.classList.add('hidden');}
-  } else {staffCompLbl.classList.add('hidden');}
 
   document.getElementById('statusBanner').textContent=gs.phaseMsg||'';
 
@@ -1162,7 +1122,7 @@ function renderSellPhase(){
   psb.textContent=statusLabel(p.status);
   psb.className='sell-patient-status-bar '+statusClass(p.status);
 
-  // Needed pills
+  // Needed pills (green = have, red = missing)
   const snPills=document.getElementById('sellNeededPills');snPills.innerHTML='';
   p.organ.forEach(o=>{
     const have=invHas(me?.inventory,o);
@@ -1170,74 +1130,79 @@ function renderSellPhase(){
     if(pill) snPills.appendChild(pill);
   });
 
-  // Complexity / staff display
-  const comp=p.comp||1;
-  const staffForOp=calcStaffForOp(me,p.organ);
-  const compVal=document.getElementById('sellCompVal');
-  const staffOk=staffForOp>=comp;
-  compVal.textContent=`${staffForOp}/${comp} 👩‍⚕️ ${staffOk?'✓':'⚠ behövs '+comp}`;
-  compVal.className='sell-comp-val '+(staffOk?'sell-comp-ok':'sell-comp-err');
-
-  // Seller count check
+  // Seller count
   const allPlayers=Object.values(gs.players||{});
   const sellersCount=allPlayers.filter(pl=>invHasAll(pl.inventory,p.organ)).length;
   const noOneCan=sellersCount===0;
   const onlyOneCan=sellersCount===1;
 
+  const banner=document.getElementById('statusBanner');
   const priceBlock=document.getElementById('sellPriceBlock');
   const priceLbl=document.getElementById('sellPriceLbl');
   const priceVal=document.getElementById('sellPriceVal');
   const sellBtn=document.getElementById('sellBtn');
-
   const passBtn=document.getElementById('passBtn');
   const acted=hasActedSell||!!gs.lastWinner;
+
+  // Sold/expired result message overrides everything
+  if(gs.lastWinner&&gs.lastWinner!=='NONE'){
+    const w=(gs.players||{})[gs.lastWinner];
+    const msg=gs.lastWinner===myPlayerId?'✓ Du sålde!':`${w?.name||'?'} sålde`;
+    banner.textContent=msg;banner.className='status-banner';
+    sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
+    passBtn.classList.add('hidden');passBtn.disabled=true;
+    priceBlock.style.display='block';
+    return;
+  }
+  if(gs.lastWinner==='NONE'&&acted){
+    banner.className='status-banner cant-sell';
+    sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
+    passBtn.classList.add('hidden');return;
+  }
 
   if(noOneCan){
     priceBlock.style.display='none';
     sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
     passBtn.classList.add('hidden');passBtn.disabled=true;
     document.getElementById('stFill').style.width='0%';
-    document.getElementById('statusBanner').textContent='Ingen spelare har rätt organ — hoppar automatiskt';
+    banner.textContent='Ingen spelare har rätt organ — patienten försämras';
+    banner.className='status-banner cant-sell';
     if(isHost&&!hasActedSell){hasActedSell=true;setTimeout(()=>doDegrade(patients,p),2500);}
   } else if(onlyOneCan){
     priceBlock.style.display='block';
-    priceLbl.textContent='MAXPRIS (du är enda säljaren)';
+    priceLbl.textContent='MAXPRIS';
     priceVal.textContent=budget.toFixed(1)+' KR';
     document.getElementById('stFill').style.width='100%';
     document.getElementById('sellBtnPrice').textContent=budget.toFixed(1);
-    if(canSell){
-      sellBtn.disabled=acted;
-      sellBtn.style.background=acted?'var(--muted)':'var(--green)';
-      // Show NEKA button — lets sole seller decline (patient degrades)
-      passBtn.classList.toggle('hidden',acted);
-      passBtn.disabled=acted;
-      if(!acted){
-        if(!staffOk){document.getElementById('statusBanner').textContent='⚠ Otillräcklig personal — kassera organ eller anlita fler!';}
-        else{document.getElementById('statusBanner').textContent='Du är enda säljaren — sälj eller neka!';}
-      }
-    } else {
+    if(canSell&&!acted){
+      sellBtn.disabled=false;sellBtn.style.background='var(--green)';
+      passBtn.classList.remove('hidden');passBtn.disabled=false;
+      banner.textContent='DU ÄR ENDA SÄLJAREN — SÄLJA ELLER NEKA';
+      banner.className='status-banner sole-sell';
+    } else if(!canSell){
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
       passBtn.classList.add('hidden');passBtn.disabled=true;
-      document.getElementById('statusBanner').textContent='Annan spelare kan sälja — inväntar...';
+      // Name the sole seller
+      const soleSeller=allPlayers.find(pl=>invHasAll(pl.inventory,p.organ));
+      banner.textContent=`Väntar på ${soleSeller?.name||'annan spelare'}...`;
+      banner.className='status-banner cant-sell';
     }
-    if(gs.lastWinner) sellBtn.disabled=true;
+    if(acted){sellBtn.disabled=true;sellBtn.style.background='var(--muted)';passBtn.classList.add('hidden');}
   } else {
+    // Multiple sellers — timer auction
     priceBlock.style.display='block';
-    priceLbl.textContent='BASPRIS';
+    priceLbl.textContent='STIGANDE PRIS';
     passBtn.classList.add('hidden');passBtn.disabled=true;
     if(canSell&&!acted){
       sellBtn.disabled=false;sellBtn.style.background='var(--green)';
-      if(!staffOk){document.getElementById('statusBanner').textContent='⚠ Otillräcklig personal — kassera organ eller anlita fler!';}
-      else{document.getElementById('statusBanner').textContent='✓ Klicka när priset är rätt!';}
+      banner.textContent='✓ DU KAN SÄLJA — klicka när priset är tillräckligt!';
+      banner.className='status-banner can-sell';
     } else if(!canSell){
       sellBtn.disabled=true;sellBtn.style.background='var(--muted)';
-      document.getElementById('statusBanner').textContent='Du saknar organ för denna patient';
+      banner.textContent='Du saknar organ för denna patient';
+      banner.className='status-banner cant-sell';
     }
     if(acted){sellBtn.disabled=true;sellBtn.style.background='var(--muted)';}
-    if(gs.lastWinner&&gs.lastWinner!=='NONE'){
-      const w=(gs.players||{})[gs.lastWinner];
-      document.getElementById('statusBanner').textContent=gs.lastWinner===myPlayerId?'✓ Du sålde!':`${w?.name||'?'} sålde`;
-    }
   }
 }
 
@@ -1377,6 +1342,16 @@ window.handleBuy=async function(){
   const orgCount=invList(me.inventory||{}).length;
   const cap=getOrgCap(me);
   if(orgCount>=cap){toast(`Fullt lager! (${orgCount}/${cap}) — anlita mer personal`,'err');hasActedBuy=false;document.getElementById('buyBtn').disabled=false;return;}
+  // Atomic claim via transaction — only the fastest player wins (no duplicates)
+  const claimRef=ref(db,`rooms/${roomCode}/lastWinner`);
+  const claimed=await runTransaction(claimRef,cur=>{
+    if(cur!==null&&cur!==undefined&&cur!=='') return; // abort — already claimed
+    return myPlayerId;
+  });
+  if(!claimed.committed){
+    toast('För sent — en annan spelare var snabbare!','err');
+    hasActedBuy=false;document.getElementById('buyBtn').disabled=false;return;
+  }
   // Auto-loan if needed (bank never goes negative)
   let currentMoney=me.money;
   let currentLoans=me.loans||0;
@@ -1387,18 +1362,19 @@ window.handleBuy=async function(){
   }
   if(currentMoney<price){
     toast('Inte råd — inte ens med max lån!','err');
+    // Roll back claim
+    await update(ref(db,`rooms/${roomCode}`),{lastWinner:null});
     hasActedBuy=false;document.getElementById('buyBtn').disabled=false;return;
   }
   const newMoney=parseFloat((currentMoney-price).toFixed(2));
   const newLoans=currentLoans+loansToTake;
-  // Count-based inventory: increment count (supports owning multiple of same organ)
   const curInv=me.inventory||{};
   const newInv={...curInv,[organId]:invCount(curInv,organId)+1};
   if(loansToTake>0){
     toast(`Lån taget automatiskt: +${loansToTake*LOAN_AMOUNT} kr`,'warn');
     update(ref(db,`rooms/${roomCode}`),{lastEvent:{type:'loan',player:myName,loans:newLoans,t:serverNow()}});
   }
-  await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,phaseMsg:`${myName} köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`});
+  await update(ref(db,`rooms/${roomCode}`),{phaseMsg:`${myName} köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,inventory:newInv,loans:newLoans});
   flash('teal');toast(`Köpte ${ORGAN_DATA[organId]?.name} för ${price.toFixed(1)} kr`,'ok');
   if(isHost) setTimeout(advanceBuy,2500);
@@ -1414,20 +1390,13 @@ window.handleSell=async function(){
   if(!p) return;
   const me=(gs.players||{})[myPlayerId];
   if(!invHasAll(me?.inventory,p.organ)){toast('Du saknar organ!','err');return;}
-  // Staff check: can we operate?
-  const comp=p.comp||1;
-  const staffForOp=calcStaffForOp(me,p.organ);
-  if(staffForOp<comp){
-    const toDiscard=getOrgansToDiscard(me.inventory||{},p.organ);
-    if(toDiscard.length>0){
-      // Check if discarding unneeded organs would free enough staff
-      const totalStaff=getStaff(me);
-      const neededOrgs=p.organ.filter(o=>invHas(me.inventory,o)).length;
-      const staffAfterDiscard=totalStaff-Math.ceil(neededOrgs/2)+Math.ceil(neededOrgs/2);
-      if(staffAfterDiscard>=comp){openDiscardModal(p,toDiscard);return;}
-    }
-    toast(`Behöver ${comp} personal för operationen — anlita fler!`,'err');return;
-  }
+  // Atomic claim — only the fastest seller wins
+  const claimRef=ref(db,`rooms/${roomCode}/lastWinner`);
+  const claimed=await runTransaction(claimRef,cur=>{
+    if(cur!==null&&cur!==undefined&&cur!=='') return; // abort
+    return myPlayerId;
+  });
+  if(!claimed.committed){toast('För sent — en annan spelare var snabbare!','err');return;}
   await handleSellPatient(p);
 };
 
@@ -1707,51 +1676,13 @@ window.handleHire=async function(){
   flash('teal');toast(`Anställde personal för ${cost.toFixed(1)} kr!`,'ok');
 };
 
-// ── DISCARD MODAL ─────────────────────────────────────────
-let _discardPending=null; // {patient, organsToDiscard}
-function openDiscardModal(patient,organsToDiscard){
-  _discardPending={patient,organsToDiscard};
-  const me=(gameState?.players||{})[myPlayerId];
-  const comp=patient.comp||1;
-  const total=getStaff(me);
-  document.getElementById('discardMsg').textContent=
-    `Operationen kräver ${comp} personal tillgänglig. Du har organ som inte behövs — kassera dem för att frigöra personal?`;
-  const list=document.getElementById('discardOrganList');list.innerHTML='';
-  organsToDiscard.forEach(o=>{
-    const pill=makeOrganPill(o,'org-pill-lg','');
-    if(pill) list.appendChild(pill);
-  });
-  document.getElementById('discardModal').classList.add('open');
-}
-window.closeDiscardModal=function(){
-  document.getElementById('discardModal').classList.remove('open');
-  _discardPending=null;
-};
-window.closeDiscardOutside=function(e){if(e.target===document.getElementById('discardModal'))closeDiscardModal();};
-window.confirmDiscard=async function(){
-  if(!_discardPending) return;
-  const {patient,organsToDiscard}=_discardPending;
-  document.getElementById('discardModal').classList.remove('open');
-  _discardPending=null;
-  const me=(gameState?.players||{})[myPlayerId];
-  // Remove unneeded organs from inventory
-  const newInv={...(me.inventory||{})};
-  organsToDiscard.forEach(o=>{const c=invCount(newInv,o);if(c>1)newInv[o]=c-1;else delete newInv[o];});
-  await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{inventory:newInv});
-  toast(`Kasserade ${organsToDiscard.length} organ`,'warn');
-  // Now proceed with sell (pass updated inventory to avoid stale gameState read)
-  await handleSellPatient(patient,newInv);
-};
-
-// Internal sell logic extracted so discard flow can reuse it
-// overrideInv: optional pre-discarded inventory (used after confirmDiscard)
-async function handleSellPatient(p,overrideInv){
-  if(hasActedSell) return;
-  const gs=gameState;if(!gs||gs.lastWinner) return;
+async function handleSellPatient(p){
+  // Note: lastWinner already claimed by transaction in handleSell before this is called
   hasActedSell=true;document.getElementById('sellBtn').disabled=true;
-  const me=(gs.players||{})[myPlayerId];
-  const currentInv=overrideInv||(me?.inventory||{});
-  if(!invHasAll(currentInv,p.organ)){toast('Du saknar organ!','err');hasActedSell=false;document.getElementById('sellBtn').disabled=false;return;}
+  const gs=gameState;
+  const me=(gs?.players||{})[myPlayerId];
+  const currentInv=me?.inventory||{};
+  if(!invHasAll(currentInv,p.organ)){toast('Du saknar organ!','err');return;}
   const budget=patientBudget(p);
   const allPlayers=Object.values(gs.players||{});
   const sellersCount=allPlayers.filter(pl=>invHasAll(pl.inventory,p.organ)).length;
@@ -1765,7 +1696,7 @@ async function handleSellPatient(p,overrideInv){
   const newCured=(me.cured||0)+1;
   const patients=gs.patientQueue||[];
   const updQ=patients.map(x=>x.id===p.id?{...x,sold:true}:x);
-  await update(ref(db,`rooms/${roomCode}`),{lastWinner:myPlayerId,patientQueue:updQ,phaseMsg:`${myName} sålde för ${paid.toFixed(1)} kr (+${p.pts}p)`});
+  await update(ref(db,`rooms/${roomCode}`),{patientQueue:updQ,phaseMsg:`${myName} sålde för ${paid.toFixed(1)} kr (+${p.pts}p)`});
   await update(ref(db,`rooms/${roomCode}/players/${myPlayerId}`),{money:newMoney,pts:newPts,inventory:newInv,cured:newCured});
   flash('teal');toast(`Sålde för ${paid.toFixed(1)} kr! +${p.pts}p`,'ok');
   if(isHost) setTimeout(advanceSell,2500);
