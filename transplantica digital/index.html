@@ -6,7 +6,6 @@
 <title>Transplantica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 :root {
   --bg:    #09141a;
@@ -309,8 +308,20 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
 .sell-top.vis{display:flex;animation:slideDown .28s ease-out;}
 /* QR code box */
 .qr-box{width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--line);border-top:2px solid var(--teal);padding:1rem;display:none;flex-direction:column;align-items:center;gap:.6rem;}
-.qr-box canvas{border-radius:4px;}
+.qr-box img{border-radius:4px;width:180px;height:180px;display:block;}
 .qr-url{font-size:.58rem;letter-spacing:.06em;color:var(--muted);text-align:center;word-break:break-all;}
+
+/* How to play modal */
+.htp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:900;display:none;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;}
+.htp-overlay.open{display:flex;}
+.htp-box{background:var(--bg2);border:1px solid var(--line);border-top:3px solid var(--teal);max-width:480px;width:100%;padding:1.4rem 1.2rem;display:flex;flex-direction:column;gap:1rem;margin:auto;}
+.htp-title{font-family:var(--disp);font-size:1.8rem;letter-spacing:.15em;color:var(--teal);}
+.htp-section{display:flex;flex-direction:column;gap:.3rem;}
+.htp-h{font-family:var(--disp);font-size:.85rem;letter-spacing:.18em;color:var(--orange2);margin-top:.2rem;}
+.htp-p{font-size:.8rem;line-height:1.55;color:var(--text);}
+.htp-p b{color:var(--teal2);}
+.btn-htp{background:transparent;border:none;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;cursor:pointer;padding:.2rem .4rem;transition:color .15s;white-space:nowrap;}
+.btn-htp:hover{color:var(--teal);}
 
 /* ── STAFF BAR ── */
 .staff-bar{display:flex;align-items:center;gap:.45rem;padding:.28rem .55rem;background:var(--bg);border-bottom:2px solid var(--line);flex-shrink:0;}
@@ -352,7 +363,10 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
         onerror="this.outerHTML='<div style=\'font-family:var(--disp);font-size:2.8rem;color:var(--teal);text-align:center;padding:.8rem 0;\'>TRANSPLANTICA</div>'">
     </div>
     <div class="lobby-box">
-      <h2>Ditt namn</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h2>Ditt namn</h2>
+        <button class="btn-htp" onclick="openHtp()">? HUR MAN SPELAR</button>
+      </div>
       <input type="text" id="playerName" placeholder="Namn" maxlength="14" autocomplete="off">
       <div class="divider-line">SKAPA SPEL</div>
       <button class="btn btn-primary" onclick="createGame()">STARTA NYTT SPEL</button>
@@ -372,7 +386,7 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
     <div class="plist-box" id="waitingPlayerList"><h3>ANSLUTNA SPELARE</h3></div>
     <div class="qr-box" id="qrBox">
       <h2 style="font-family:var(--disp);font-size:.78rem;letter-spacing:.3em;color:var(--muted);">SKANNA FÖR ATT GÅ MED</h2>
-      <canvas id="qrCanvas"></canvas>
+      <img id="qrImg" src="" alt="QR-kod">
       <div class="qr-url" id="qrUrl"></div>
     </div>
     <div class="settings-row" id="diffRow">
@@ -548,6 +562,53 @@ select{background:var(--bg3);border:1px solid var(--line);color:var(--text);font
   <div class="modal-img-wrap">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
     <img id="modalImg" src="" alt="">
+  </div>
+</div>
+
+<!-- How to play -->
+<div class="htp-overlay" id="htpOverlay" onclick="closeHtpOutside(event)">
+  <div class="htp-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="htp-title">HUR MAN SPELAR</div>
+      <button class="modal-close-btn" style="position:static;" onclick="closeHtp()">✕</button>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">MÅLET</div>
+      <p class="htp-p">Köp organ och sälj dem till patienter. Den spelare med <b>mest poäng + pengar</b> vid spelets slut vinner. Poäng hålls hemliga under hela spelet.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">KÖPFAS</div>
+      <p class="htp-p">Organ läggs ut ett i taget med ett <b>fallande pris</b> (30 → 0 kr). Klicka <b>KÖPA</b> när priset är rätt — den som klickar först vinner organet. Du kan inte köpa om lagret är fullt.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">SÄLJFAS</div>
+      <p class="htp-p">Patienter behandlas i tur och ordning — döende först, sedan sjuka, sedan stabila. Om <b>flera spelare</b> har rätt organ startar ett stigande pris (0 → budget). Klicka <b>SÄLJA</b> när priset är tillräckligt högt.<br><br>Är du <b>enda säljaren</b> får du hela budgeten direkt — men du kan också trycka <b>NEKA</b> för att låta patienten försämras.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">PATIENTER</div>
+      <p class="htp-p">Varje patient har en <b>status</b>: Stabil → Sjuk → Döende. Om ingen säljer försämras patienten ett steg. Dör patienten donerar den slumpmässiga organ till nästa rundes kö. Döende patienter betalar <b>50% bonus</b>.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">PERSONAL 👩‍⚕️</div>
+      <p class="htp-p">Varje spelare börjar med <b>2 permanent personal</b>. Varje personal ger 2 lagerplatser för organ. Du kan anlita mer personal från en gemensam pool — priset stiger för varje anställd och återställs varje runda.<br><br>Operationer kräver ett visst antal <b>tillgänglig personal</b> (komplexitet 1–4). Personal som håller organ du <i>inte</i> behöver för patienten blockerar operationen — kassera dem eller anlita fler.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">LÅN</div>
+      <p class="htp-p">Du kan ta upp till <b>3 lån</b> på 10 kr styck. Varje lån ger <b>−2 poäng</b> vid spelets slut. Köp tar automatiskt lån om du har råd med lån men inte kontant.</p>
+    </div>
+
+    <div class="htp-section">
+      <div class="htp-h">POÄNGSÄTTNING</div>
+      <p class="htp-p">Slutresultat = <b>Kassa + Poäng − (Lån × 2)</b>. Patienter ger 2–13 poäng beroende på svårighetsgrad. Poäng visas inte förrän spelet är slut.</p>
+    </div>
+
+    <button class="btn btn-ghost" onclick="closeHtp()" style="margin-top:.5rem;">STÄNG</button>
   </div>
 </div>
 
@@ -810,16 +871,11 @@ window.createGame=async function(){
   document.getElementById('displayCode').textContent=roomCode;
   document.getElementById('diffRow').style.display='';
   document.getElementById('startGameBtn').style.display='';
-  // Generate QR code linking directly to this room
+  // Generate QR code linking directly to this room (image via qrserver.com)
   const joinUrl=`https://transplanticadigital.netlify.app/?room=${roomCode}`;
-  const qrBox=document.getElementById('qrBox');
-  qrBox.style.display='flex';
+  document.getElementById('qrBox').style.display='flex';
   document.getElementById('qrUrl').textContent=joinUrl;
-  QRCode.toCanvas(document.getElementById('qrCanvas'),joinUrl,{
-    width:180,
-    color:{dark:'#2eb8c8',light:'#0d1e26'},
-    errorCorrectionLevel:'M',
-  });
+  document.getElementById('qrImg').src=`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(joinUrl)}&color=2eb8c8&bgcolor=0d1e26&format=png&margin=8`;
   showScreen('screen-waiting');
 };
 
@@ -1714,6 +1770,11 @@ async function handleSellPatient(p,overrideInv){
   flash('teal');toast(`Sålde för ${paid.toFixed(1)} kr! +${p.pts}p`,'ok');
   if(isHost) setTimeout(advanceSell,2500);
 }
+
+// ── HOW TO PLAY ───────────────────────────────────────────
+window.openHtp=function(){document.getElementById('htpOverlay').classList.add('open');};
+window.closeHtp=function(){document.getElementById('htpOverlay').classList.remove('open');};
+window.closeHtpOutside=function(e){if(e.target===document.getElementById('htpOverlay'))closeHtp();};
 
 // ── MODAL ─────────────────────────────────────────────────
 window.openModal=function(bild){
