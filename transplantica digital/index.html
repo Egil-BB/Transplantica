@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2eb8c8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Transplantica">
+<link rel="apple-touch-icon" href="/images/ui/icon-192.png">
+<link rel="manifest" href="/manifest.json">
 <title>Transplantica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -1715,6 +1721,11 @@ window.openModal=function(bild){
 window.closeModal=function(){document.getElementById('patientModal').classList.remove('open');};
 window.closeModalOutside=function(e){if(e.target===document.getElementById('patientModal'))closeModal();};
 
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));
+}
 </script>
 </body>
 </html>
